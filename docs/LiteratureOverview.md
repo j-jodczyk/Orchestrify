@@ -7,9 +7,9 @@
 | Musegan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  |             |
 | Literature survey of multi-track music generation | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               |                  |             |
 | MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#MMM) |
-| LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         |                  |             |
+| LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
 | A transformer generative adversarial network...   |       | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  |             |
-|  |   |   |   |   |
+| MuseNet |   |   |   |   |
 
 
 ### MMM
@@ -52,3 +52,34 @@
   - Train GPT2 models using HuggingFace Transformers library with 8 attention heads, 6 layersm an embedding of size 512 and attention window of 2048.
   - Trained two typed of models - MMMTrack on MultiTrack representation and MMMBar on BarFill representation. (4-bar and 8-bar versions)
   - Randomly order tracks so that model learns each possible conditional between different tracks.
+
+
+### LakhNES
+- Mutli-instrumental track generator using a Transformer.
+- NES-MDB dataset of four-instrumental scores from early video game soud synthesis chip.
+- Pretraining with Lakh dataset.
+- Capable of generating arbitrarily-long sequences.
+- Event-based representation similar to that used for single-instrument music.
+  - Each MIDI file is converted to a time-ordered sequence of events, so that every entry in the sequence corresponds to a musical event.
+  - Handling of rythmic information - add time shift event wich represent time advancing by some number of ticks
+  - 631 events coresponding to time-shifts (3 groups of length) and note on/off events for individual instruments
+- Methodology
+  - Language modeling factorization - factorize the joint probability of a musical sequence consiting of N events into a product of conditional probabilities. This allows for a simple left-to-right algorithm for music generation (at each timestep sample from model-estimated distribution).
+  - The goal of optimization procedure is to find a model configuration which optimizes the likelihood of the real event sequences.
+  - Transformer - only concerened with the decoder part.
+    - Using Transformer-XL designed specifically to handle longer sequences. In contrast to Trasfomer, it learns how to incorporate recurrent state from previous segments, not only current training segment.
+    - 12 attention layers, each with 8 heads. Lr = 2e-5. 30 minibatches of size 30.
+  - Pretraining
+    - Map each Lakh MIDI file into one that fits the designed representation.
+      - Skip the ones that are monophonic melodies, and those that fall outside NES range of MIDI notes.
+      - Randomly assign instruments to 3 instruments of NES (P1/P2/TR). There are potentially many possible assignments (variable number of instruments in Lakh files) - outputting multiple examples for one file. 
+      - For pervussive instruments each individual percussive voice is assgned to a noise type 
+    - Pretrain on such representations.
+    - Fine-tune on NES dataset.
+  - Each excerpt that is used for training is around 9 seconds long.
+- Data augmentation:
+  - Transpose melodic voices by random number of semitones.
+  - Adjust the speed og the piece by a random percentage.
+  - Half of the time remove a random number of instruments from the ensamble.
+  - Half of the time shuffle the score-to-instrument alignment for melodic instruments.
+
