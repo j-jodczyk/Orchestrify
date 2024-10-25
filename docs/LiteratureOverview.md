@@ -4,13 +4,19 @@
 |---------------------------------------------------|-------|--------------------------------------------------------------------------|------------------------------------|-------------------------------|
 | SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  |             |
 | Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  |             |
-| Musegan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  |             |
+| MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  |             |
 | Literature survey of multi-track music generation | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               |                  |             |
 | MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#MMM) |
 | LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
 | A transformer generative adversarial network...   |       | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  |             |
-| MuseNet |   |   |   |   |
+| MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
 
+### MuseGan
+(Just a few notes for now, as this was described in MuseNet paper)
+- 3 different GAN models.
+- Can generate different instruments playing in unison.
+- Input vector acting as a seed in the netwoek for the different GANs to generate music with the same intent and alignment.
+- Lakh Piano-Roll Dataset.
 
 ### MMM
 - Based on transformer architecture
@@ -83,3 +89,29 @@
   - Half of the time remove a random number of instruments from the ensamble.
   - Half of the time shuffle the score-to-instrument alignment for melodic instruments.
 
+### MuseNet
+- Model composed of two parts:
+  - Discriminator - for generating the first chord of a bar conditioned on the previous bars.
+  - Generator - for generating notes of a given bar based on the chord as seed note.
+- Generating music bar by bar with contents of each bar conditioned on a chor / set of notes.
+- Seed chord chosed from prefixed set of chords using discriminator.
+- Details of modules:
+  - Discriminator (LSTM):
+    - MultiLayerPerceptron
+    - 5 layers, 64-32-16-8-8 units in each layer
+      - Output layer has 8 units because it's the number of chords it's predicting for a given song.
+    - The model can by retrained by replacing the last two layers for a different dataset.
+  - Generator (LSTM and GPT2):
+    - LSTM architecture (3 layers):
+      - Trained using RMSProp as the optimizer.
+      - Each layer consists of 3 gates: input, forget and output.
+        - Input informs what new information is going to be stored in the cell state.
+        - Forget informs what information is to be thrown away.
+        - Output provides the activation to the final output of the LSTM block at a given timestamp.
+    - Receives the entire hidden vector of the discriminator output.
+    - START and END tokens are added to the sequence before feeding it to the decoder.
+    - Each recurrent unit of LSTM accepts an element from the hidden vector from the previous units and produces a new hidden element. This is what helps the music sound more coherent.
+  - Attention layer (on top of encoder and decoder layers)
+    - Learns to conventrate more on parts of the output of the previous layer using the dense output layer. It does so by taking the information from the encoder and weighing it in accordance to the decoder's needs.
+- LSTM trained on Lakh Piano roll Dataset.
+- GPT2 trained on Nottingham Music Dataset.
