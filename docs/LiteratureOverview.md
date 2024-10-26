@@ -5,7 +5,7 @@
 | SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  |             |
 | Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  |             |
 | MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  |             |
-| Literature survey of multi-track music generation | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               |                  |             |
+| MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               | -                | [see below](#MTM-GAN)            |
 | MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#MMM) |
 | LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
 | A transformer generative adversarial network...   |       | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  |             |
@@ -17,6 +17,26 @@
 - Can generate different instruments playing in unison.
 - Input vector acting as a seed in the netwoek for the different GANs to generate music with the same intent and alignment.
 - Lakh Piano-Roll Dataset.
+
+### MTM-GAN
+- GAN-based multi-track music generator.
+- Generating bass, drums, guitar, piano and strings.
+- Mutual game learing of two models: Generative model and Discriminative model.
+  - "Minimum-maximum binary game".
+  - Training is completed after the Discriminator can no longer distinguish between the real data and the generated data.
+- Generetive model generates new data by capturing potential distribution of the actual data.
+- Discriminative model is a binary classifier used to determine whether the input is real or generated.
+- The formation process of GAN is unstable and can lead to model collaps. Therefore an improved network is proposed consisting of 3 parts:
+  - MTM-related model - This component generates distinct tracks for different instruments by capturing correlations between these tracks.
+  - Time structure model (For track alignment) - Uses random vectors to manage both independent and interdependent timing for each track.
+  - Discritization model - Divides time into units that can capture the different rhythmic requirements for each instrument
+- Training on piano rolls generated from MIDI files from LakhMIDI Dataset.
+- Includes a Consistency Penalty Term (CT), which adds a regularization layer to the GAN's objective function.
+- CT helps stabilize training by reducing large fluctuations in the discriminator’s loss function.
+- Track generation:
+  - Generate initial outputs for each track individually. Each track’s generator receives input noise and generates sequences that align with specific instrument characteristics.
+  - Time structure and MTM correlation model are used to align these tracks.
+  - The integrated multi-track output is refined by the discriminator, which iterates with the generator to improve overall coherence.
 
 ### MMM
 - Based on transformer architecture
