@@ -11,7 +11,7 @@
 | A transformer generative adversarial network...   |       | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  |             |
 | MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
 | Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#music-transformer) |
-| Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         |                  | [see below](#anticipatory-music-transformer) |
+| Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         | https://github.com/jthickstun/anticipation | [see below](#anticipatory-music-transformer) |
 
 ### MuseGan
 (Just a few notes for now, as this was described in MuseNet paper)
