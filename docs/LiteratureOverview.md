@@ -10,8 +10,8 @@
 | LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
 | A transformer generative adversarial network...   |       | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  |             |
 | MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
-| Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#Music Transformer) |
-| Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         |                  | [see below](#Anticipatory Music Transformer) |
+| Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#music-transformer) |
+| Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         |                  | [see below](#anticipatory-music-transformer) |
 
 ### MuseGan
 (Just a few notes for now, as this was described in MuseNet paper)
@@ -141,3 +141,13 @@
 ### Music Transformer
 
 ### Anticipatory Music Transformer
+- Based on transformer architecture
+- Generating structured symbolic music
+- Uses anticipation mechanism to predict and align future musical content with past sequences, focusing on coherence and long-term dependencies.
+  - Incorporates Anticipation Loss to encourage the model to align future sequences with past context, improving the planning of long-term structures.
+  - Introduces a “lookahead” feature in the self-attention mechanism to enhance the generation of coherent musical sequences.
+  - Models relationships between distant musical events, leading to improved structural consistency and stylistic coherence in generated music.
+- Temporal representation of musical events:
+  - Views music generation as a temporal point process where events (e.g., notes or chords) occur at specific time intervals. Each event is treated as a point in time, reflecting its timing and attributes like pitch, duration, and velocity.
+  - Time-interval encoding: Encodes time intervals between successive events instead of using absolute time stamps, aligning with how humans perceive music rhythmically.
+- Trained on Lakh MIDI dataset
