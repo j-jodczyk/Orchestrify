@@ -10,6 +10,8 @@
 | LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
 | A transformer generative adversarial network...   |       | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  |             |
 | MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
+| Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#Music Transformer) |
+| Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         |                  | [see below](#Anticipatory Music Transformer) |
 
 ### MuseGan
 (Just a few notes for now, as this was described in MuseNet paper)
@@ -135,3 +137,7 @@
     - Learns to conventrate more on parts of the output of the previous layer using the dense output layer. It does so by taking the information from the encoder and weighing it in accordance to the decoder's needs.
 - LSTM trained on Lakh Piano roll Dataset.
 - GPT2 trained on Nottingham Music Dataset.
+
+### Music Transformer
+
+### Anticipatory Music Transformer
