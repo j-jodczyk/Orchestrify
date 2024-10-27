@@ -31,12 +31,28 @@
 - Application and user impact:
   - Allows users to create personalized music tracks by singing or humming, expanding creative possibilities for both musicians and non-musicians.
 
-### MuseGan
-(Just a few notes for now, as this was described in MuseNet paper)
-- 3 different GAN models.
-- Can generate different instruments playing in unison.
-- Input vector acting as a seed in the netwoek for the different GANs to generate music with the same intent and alignment.
-- Lakh Piano-Roll Dataset.
+### MuseGAN
+- **Overview**: MuseGAN is a GAN-based model designed for generating multi-track, polyphonic symbolic music. It focuses on generating music with harmonic and rhythmic structure, multi-track interdependency, and temporal coherence.
+- **Model Variants**:
+  - **Jamming Model**: Uses multiple generators and discriminators, each responsible for a separate track, allowing for independent track generation.
+  - **Composer Model**: Uses a single generator and a single discriminator to generate multi-track piano-rolls collectively. It aims to harmonize the tracks together.
+  - **Hybrid Model**: Combines elements of the Jamming and Composer models, utilizing separate generators for each track but with shared input to encourage inter-track coordination.
+- **Data Representation**: Multi-track piano-roll representation of polyphonic music, where each track corresponds to a different instrument (e.g., bass, drums, guitar, piano, and strings).
+- **Training Dataset**:
+  - **Lakh Pianoroll Dataset (LPD)**: Derived from the Lakh MIDI Dataset (LMD). Includes 173,997 unique multi-track piano-rolls, reduced to five core tracks.
+  - The dataset was cleansed and segmented into phrases of four bars for training.
+- **Training Strategy**:
+  - Utilizes Wasserstein GAN with a gradient penalty (WGAN-GP) to stabilize training and reduce mode collapse.
+  - The generator consists of two sub-networks: a temporal structure generator (Gtemp) and a bar generator (Gbar).
+  - Data augmentation methods include merging sparse tracks and segmenting MIDI files into manageable lengths.
+- **Objective Evaluation Metrics**:
+  - **Intra-track Metrics**: Includes metrics like Empty Bars (EB), Used Pitch Classes (UPC), Qualified Notes (QN), and Drum Patterns (DP).
+  - **Inter-track Metric**: Tonal Distance (TD) measures harmonic relations between tracks.
+- **User Study**: A listening test with 144 subjects indicated that the Hybrid model performed well in terms of musical structure and inter-track harmony.
+- **Key Findings**:
+  - MuseGAN can generate coherent, multi-track music segments with clear rhythmic patterns and harmonic relations.
+  - The Composer and Hybrid models demonstrated superior cross-track harmony compared to the Jamming model.
+- **Applications**: Can be used for generating multi-track symbolic music and extending to other domains involving sequential multi-track data.
 
 ### MTM-GAN
 - GAN-based multi-track music generator.
@@ -157,6 +173,22 @@
 - GPT2 trained on Nottingham Music Dataset.
 
 ### Music Transformer
+- **Overview**: A transformer model specialized for generating symbolic music that maintains long-term coherence and structure by leveraging self-attention.
+- **Relative Position Encoding**:
+  - Integrates relative timing information, allowing the model to focus on relational distances rather than absolute positions, crucial for modeling long sequences of music.
+  - Improves memory efficiency, reducing the space complexity from \(O(L^2D)\) to \(O(LD)\).
+  - This enables the model to generate longer sequences (~2000 tokens) than previous attempts (~500 tokens).
+- **Data Representation**:
+  - **JSB Chorales**: Uses a serialized grid-like representation of polyphonic choral music. Timing is discretized to sixteenth notes, with relative attention capturing relational timing and pitch intervals.
+  - **Piano-e-Competition**: MIDI-like event-based encoding with expressive timing and velocity, employing 128 NOTE_ON, 128 NOTE_OFF, 100 TIME_SHIFT, and 32 VELOCITY tokens. 
+- **Experiments**:
+  - Demonstrated improvement in perplexity and perceived coherence in generating piano performances, outperforming LSTM-based models like PerformanceRNN.
+  - Priming experiments show that relative attention helps retain motifs and structural repetitions across longer sequences.
+  - In a sequence-to-sequence task, the model was capable of generating accompaniments conditioned on given melodies.
+- **Training Details**:
+  - Used relative global and local attention to handle longer sequences, comparing multiple architectures and relative attention types.
+  - Data augmentation with pitch transpositions and time-stretching, helping to generalize the model.
+- **Human Evaluations**: Conducted listening tests that confirmed the relative Transformer as more coherent and musically structured compared to baseline Transformer models.
 
 ### Anticipatory Music Transformer
 - Based on transformer architecture
