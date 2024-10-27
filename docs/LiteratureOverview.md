@@ -2,7 +2,7 @@
 
 | Title                                             | Year  | Article link                                                             | Source code link                   | Description                   |
 |---------------------------------------------------|-------|--------------------------------------------------------------------------|------------------------------------|-------------------------------|
-| SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  |             |
+| SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  | [see below](#SingSong) |
 | Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  |             |
 | MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  |             |
 | MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               | -                | [see below](#MTM-GAN)            |
@@ -12,6 +12,24 @@
 | MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
 | Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#music-transformer) |
 | Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         | https://github.com/jthickstun/anticipation | [see below](#anticipatory-music-transformer) |
+
+### SingSong
+- Based on conditional generative modeling: Utilizes AudioLM as a foundational model but adapts it for generating instrumental music that aligns with vocal inputs.
+- Generating instrumental accompaniments from vocal inputs: Directly uses a user's singing or humming to create synchronized instrumental accompaniments, enabling seamless mixing.
+  - Key innovation involves aligning input vocals with instrumental accompaniment, allowing naive mixing while preserving coherence.
+- Training and data preparation:
+  - Source separation for dataset creation: A state-of-the-art source separation algorithm (MDXNet) is used to create aligned pairs of vocals and instrumentals from a large dataset of 1M music tracks. This serves as parallel training data.
+  - Training on audio codes: Instead of modeling raw waveforms, SingSong leverages AudioLM's hierarchical representation of audio via discrete codes (semantic and acoustic). This enables scalable training and generation of high-quality audio.
+- Featurization and conditioning:
+  - Adding noise to vocals: To address artifacts in separated vocals, noise is introduced to mask residual instrumental sounds. This step improves the model’s generalization ability to real-world isolated vocals.
+- Model architecture:
+  - A sequence-to-sequence Transformer model (based on T5 architecture) is used for predicting instrumental audio codes from vocal features.
+  - Coarse and fine levels of audio representation are generated hierarchically to improve fidelity.
+- Evaluation and performance:
+  - Frechet Audio Distance (FAD) is used as a primary metric to evaluate audio quality and generalization, showing a 55% improvement with advanced featurizations.
+  - Listening study results indicate a significant preference for SingSong-generated instrumentals compared to baseline retrieval-based methods.
+- Application and user impact:
+  - Allows users to create personalized music tracks by singing or humming, expanding creative possibilities for both musicians and non-musicians.
 
 ### MuseGan
 (Just a few notes for now, as this was described in MuseNet paper)
