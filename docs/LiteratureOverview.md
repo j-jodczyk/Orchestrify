@@ -4,7 +4,7 @@
 |---------------------------------------------------|-------|--------------------------------------------------------------------------|------------------------------------|-------------------------------|
 | SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  | [see below](#SingSong) |
 | Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  |             |
-| MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  |             |
+| MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  | [see below](#MuseGAN) |
 | MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               | -                | [see below](#MTM-GAN)            |
 | MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#MMM) |
 | LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
