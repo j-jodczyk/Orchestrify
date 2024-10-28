@@ -4,11 +4,11 @@
 |---------------------------------------------------|-------|--------------------------------------------------------------------------|------------------------------------|-------------------------------|
 | SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  | [see below](#SingSong) |
 | Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  | [see below](#Counterpoint-by-convolution) |
-| MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  | [see below](#MuseGAN) |
-| MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               | -                | [see below](#MTM-GAN)            |
+| MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         | https://github.com/salu133445/musegan<br>demo: https://hermandong.com/musegan/ | [see below](#MuseGAN) |
+| MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                     |                  | [see below](#MTM-GAN) |
 | MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#MMM) |
 | LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
-| A transformer generative adversarial network...   |       | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  |             |
+| MTT‐GAN                                           | 2021  | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  | [see below](#MTT‐GAN)|
 | MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
 | Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#music-transformer) |
 | Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         | https://github.com/jthickstun/anticipation | [see below](#anticipatory-music-transformer) |
@@ -152,6 +152,29 @@
   - Adjust the speed og the piece by a random percentage.
   - Half of the time remove a random number of instruments from the ensamble.
   - Half of the time shuffle the score-to-instrument alignment for melodic instruments.
+
+### MTT‐GAN 
+- Decoding block used to learn the internal indormation of a single-track music
+- Cross-track transformers are used to learn the information across tracks with different musical instruments.
+- Model is composed of
+  - Generation network
+    - Cross-track transformers (for learning information between tracks)
+      - The number of transformers depends on the amount of instruments (one transformer per instrument).
+      - Merging the time series through concatenation process. Each transformer uses low-level features from another learnt sequence to reinforce the learning sequence by learing the attention between different track features.
+    - Transformer decoders only for learing about a single-track
+  - Reward network - regulating music through music rules (both single- and multitrack)
+    - Music theory for single track to make it more inline with human composition.
+      - For example restricting range for a specific genre.
+    - Chord progression for overall chord direction between instruments (improving harmony).
+  - Authentication network
+- Data training
+  - 3 tracks with the same instruments: piano, bass, guitar.
+  - Monorail music is learnt in pairs.
+- Evaluation
+  - Harmony score
+  - Prediction accuracy - degree of similarity between generated notes and actual notes
+  - Sequence similarity - how many individual characters are modified to transorm to the input sequence to the predicted sequence.
+  - Subjective evaluation judging rhythm, melody, integrity, music form, audibility, fluency.
 
 ### MuseNet
 - Model composed of two parts:
