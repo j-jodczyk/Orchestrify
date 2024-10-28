@@ -3,7 +3,7 @@
 | Title                                             | Year  | Article link                                                             | Source code link                   | Description                   |
 |---------------------------------------------------|-------|--------------------------------------------------------------------------|------------------------------------|-------------------------------|
 | SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  | [see below](#SingSong) |
-| Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  |             |
+| Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  | [see below](#Counterpoint-by-convolution) |
 | MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         |                  | [see below](#MuseGAN) |
 | MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                               | -                | [see below](#MTM-GAN)            |
 | MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#MMM) |
@@ -30,6 +30,14 @@
   - Listening study results indicate a significant preference for SingSong-generated instrumentals compared to baseline retrieval-based methods.
 - Application and user impact:
   - Allows users to create personalized music tracks by singing or humming, expanding creative possibilities for both musicians and non-musicians.
+
+### Counterpoint by convolution
+- Nonlinear music composition: COCONET uses a convolutional neural network (CNN) to model counterpoint by allowing flexible, non-chronological composition and revision, mimicking human composers' approach.
+- The model leverages an orderless NADE framework to predict notes without adhering to a fixed order, enabling complex polyphonic structures.
+- Uses blocked Gibbs sampling to iteratively refine and correct generated notes, improving overall sample quality and coherence.
+- Encodes music as three-dimensional tensors (piano rolls), capturing both local and global structures of polyphonic pieces, particularly Bach chorales.
+- Demonstrates superior sample quality through both quantitative metrics and human evaluations, outperforming traditional autoregressive models in generating coherent Bach-style counterpoint.
+- Supports diverse applications like harmonization and polyphonic completion, enabling creative exploration of musical structures.
 
 ### MuseGAN
 - **Overview**: MuseGAN is a GAN-based model designed for generating multi-track, polyphonic symbolic music. It focuses on generating music with harmonic and rhythmic structure, multi-track interdependency, and temporal coherence.
