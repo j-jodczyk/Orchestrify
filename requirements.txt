@@ -6,4 +6,5 @@ click
 Sphinx
 coverage
 flake8
-miditok
+transformers
+torchaccelerate==1.0.1
