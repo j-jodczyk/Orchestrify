@@ -8,3 +8,4 @@ coverage
 flake8
 transformers
 torchaccelerate==1.0.1
+note_seq
