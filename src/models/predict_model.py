@@ -1,10 +1,9 @@
 """
 Contains script to generate midi file from a model
 """
-import random
 import note_seq
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
-from AI_GURU.token_sequence_helpers import get_priming_token_sequence, token_sequence_to_note_sequence
+from src.AI_GURU.token_sequence_helpers import get_priming_token_sequence, token_sequence_to_note_sequence
 
 # todo: this should not be main function, but rather a parametrized function that will take model and tokenizer
 def main():

@@ -4,7 +4,7 @@ Contains script for transfer learining the model
 
 import os
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel, DataCollatorWithPadding, Trainer, TrainingArguments
-from src.models.AI_GURU.token_sequence_dataset import TokenSequenceDataset
+from src.AI_GURU.token_sequence_dataset import TokenSequenceDataset
 
 # todo: this should not be a main function - this should take arguments that will allow to reuse it efficiently
 def main():
