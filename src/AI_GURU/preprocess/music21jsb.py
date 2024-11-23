@@ -16,7 +16,7 @@
 
 import music21
 from music21 import corpus
-from source.preprocess.preprocessutilities import events_to_events_data
+from .preprocessutilities import events_to_events_data
 
 
 def preprocess_music21():

@@ -1,8 +1,8 @@
 
-import datasetcreator
-import datasetcreatorconfig
+from ..AI_GURU.datasetcreator import DatasetCreator
+from ..AI_GURU.datasetcreatorconfig import JSBDatasetCreatorTrackConfig
 
-def main():
-	dataset_creator_config = datasetcreatorconfig.JSBDatasetCreatorTrackConfig()
-	dataset_creator = datasetcreator.DatasetCreator(dataset_creator_config)
-	dataset_creator.create(datasets_path='../data/external/Jazz Midi', overwrite=False)
+def make_dataset(datasets_path: str, overwrite: bool=False):
+	dataset_creator_config = JSBDatasetCreatorTrackConfig()
+	dataset_creator = DatasetCreator(dataset_creator_config)
+	dataset_creator.create(datasets_path, overwrite)
