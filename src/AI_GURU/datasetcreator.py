@@ -19,6 +19,7 @@ from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import WhitespaceSplit
 from tokenizers.trainers import WordLevelTrainer
+from pathlib import Path
 from .preprocess.music21jsb import preprocess_music21
 from .preprocess.encode import encode_songs_data, get_density_bins
 
@@ -30,10 +31,8 @@ class DatasetCreator:
         self.config = config
 
     def create(self, datasets_path, overwrite=False):
-
-        # Make sure that datasets path exists.
         if not os.path.exists(datasets_path):
-            os.mkdir(datasets_path)
+            raise Exception("Dataset path doesn't exist")
 
         # Make sure that path for this specific dataset exists.
         dataset_path = os.path.join(datasets_path, self.config.dataset_name)
@@ -45,7 +44,15 @@ class DatasetCreator:
         # Prepare for getting music data as JSON.
         json_data_method = None
         if self.config.json_data_method == "preprocess_music21":
-            json_data_method = preprocess_music21
+            # midi_paths = Path(datasets_path).rglob("*")
+            # midi_files = []
+            # while len(midi_files) < 10:
+            #     midi_path = next(midi_paths)
+            #     if not midi_path.is_file() or midi_path.suffix != '.mid':
+            #         continue
+            #     midi_files.append(str(midi_path))
+            midi_files = [str(file) for file in list(Path(datasets_path).rglob("*"))[:10] if file.is_file() and file.suffix == ".mid"]
+            json_data_method = lambda : preprocess_music21(midi_files)
         elif callable(self.config.json_data_method):
             json_data_method = self.config.json_data_method
         else:

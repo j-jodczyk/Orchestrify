@@ -15,13 +15,13 @@
 # Lint as: python3
 
 import music21
-from music21 import corpus
+from music21 import converter
 from .preprocessutilities import events_to_events_data
 
 
-def preprocess_music21():
-
-    songs = list(corpus.chorales.Iterator())
+def preprocess_music21(midi_files):
+    # songs = list(corpus.chorales.Iterator()) -- this results in training on Bach chorales
+    songs = [converter.parse(midi_file) for midi_file in midi_files]
 
     split_index = int(0.8 * len(songs))
     songs_train = songs[:split_index]
@@ -74,7 +74,7 @@ def preprocess_music21_part(part, part_index, train):
     track_data["number"] = part_index
     track_data["bars"] = []
 
-    for measure_index in range(1000):
+    for measure_index in range(1, 1000): # measure21 uses 1-based indexing for measures
         measure = part.measure(measure_index)
         if measure is None:
             break

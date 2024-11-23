@@ -16,7 +16,7 @@ def main():
     dataset_path = kagglehub.dataset_download("imsparsh/lakh-midi-clean")
     # dataset_path = kagglehub.dataset_download("anujtrehan007/midi-songs")
     print("Downloaded dataset")
-    make_dataset(dataset_path)
+    make_dataset(dataset_path, overwrite=True)
     print("Dataset created")
 
     train_path = os.path.join(dataset_path, 'jsb_mmmtrack', 'token_sequences_train.txt')
