@@ -51,7 +51,7 @@ class DatasetCreator:
             #     if not midi_path.is_file() or midi_path.suffix != '.mid':
             #         continue
             #     midi_files.append(str(midi_path))
-            midi_files = [str(file) for file in list(Path(datasets_path).rglob("*"))[:10] if file.is_file() and file.suffix == ".mid"]
+            midi_files = [str(file) for file in list(Path(datasets_path).rglob("*")) if file.is_file() and file.suffix == ".mid"]
             json_data_method = lambda : preprocess_music21(midi_files)
         elif callable(self.config.json_data_method):
             json_data_method = self.config.json_data_method
