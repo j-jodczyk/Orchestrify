@@ -94,7 +94,7 @@ def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=
             current_time += delta
         elif token.startswith("DENSITY="):
             pass
-        elif token == "[PAD]":
+        elif token == "[PAD]" or token == "[UNK]":
             pass
         else:
             assert False, token

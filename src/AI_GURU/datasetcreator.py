@@ -44,14 +44,14 @@ class DatasetCreator:
         # Prepare for getting music data as JSON.
         json_data_method = None
         if self.config.json_data_method == "preprocess_music21":
-            # midi_paths = Path(datasets_path).rglob("*")
-            # midi_files = []
-            # while len(midi_files) < 10:
-            #     midi_path = next(midi_paths)
-            #     if not midi_path.is_file() or midi_path.suffix != '.mid':
-            #         continue
-            #     midi_files.append(str(midi_path))
-            midi_files = [str(file) for file in list(Path(datasets_path).rglob("*")) if file.is_file() and file.suffix == ".mid"]
+            midi_paths = Path(datasets_path).rglob("*")
+            midi_files = []
+            while len(midi_files) < 10:
+                midi_path = next(midi_paths)
+                if not midi_path.is_file() or midi_path.suffix != '.mid':
+                    continue
+                midi_files.append(str(midi_path))
+            # midi_files = [str(file) for file in list(Path(datasets_path).rglob("*")) if file.is_file() and file.suffix == ".mid"]
             json_data_method = lambda : preprocess_music21(midi_files)
         elif callable(self.config.json_data_method):
             json_data_method = self.config.json_data_method

@@ -11,3 +11,4 @@ torchaccelerate==1.0.1
 note_seq
 kagglehub
 music21
+note_seq

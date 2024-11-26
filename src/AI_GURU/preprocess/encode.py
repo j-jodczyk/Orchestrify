@@ -32,6 +32,64 @@ def encode_songs_data(songs_data, transpositions, permute, window_size_bars, hop
     # Done.
     return token_sequences
 
+def encode_song_data_singular(song_data, density):
+    """
+    Used to encode song data on per one midi file basis - as opposed to
+    encode_song_data, which is used to encode a song that is a part of
+    a greater dataset.
+
+    NOTE: Doesn't give the option of bar fill, since our project is not focued on that
+    """
+    token_sequences = []
+
+    token_sequences += ["PIECE_START"]
+    track_data_indices = list(range(len(song_data["tracks"])))
+
+    for track_data_index in track_data_indices:
+        track_data = song_data["tracks"][track_data_index]
+        encoded_track_data = encode_track_data_singular(track_data, density)
+        token_sequences += encoded_track_data
+
+    return token_sequences
+
+def encode_track_data_singular(track_data, density):
+    """
+    Used to encode trak data on per one midi file basis - as opposed to
+    encode_trak_data, which is used to encode tracks from a song that is a part of
+    a greater dataset.
+    """
+    tokens = ["TRACK_START"]
+    number = track_data["number"]
+
+    if not track_data.get("drums", False):
+        tokens += [f"INST={number}"]
+    else:
+        tokens += ["INST=DRUMS"]
+
+    tokens += [f"DENSITY={density}"]
+    for bar_data in track_data["bars"]:
+        tokens += encode_bar_data_no_transposition(bar_data)
+
+    tokens += ["TRACK_END"]
+    return tokens
+
+def encode_bar_data_no_transposition(bar_data):
+    """
+    Encodes bar data without transposition (because I don't understand it)
+
+    NOTE: Doesn't give the option of bar fill, since our project is not focued on that
+    """
+    tokens = ["BAR_START"]
+    for event_data in bar_data["events"]:
+        tokens += [encode_event_data_no_transposition(event_data)]
+    tokens += ["BAR_END"]
+    return tokens
+
+def encode_event_data_no_transposition(event_data):
+    """
+    Encodes event data without transposition
+    """
+    return encode_event_data(event_data, 0)
 
 def encode_song_data(song_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
 
