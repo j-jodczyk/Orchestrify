@@ -12,6 +12,9 @@
 | MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
 | Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#music-transformer) |
 | Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         | https://github.com/jthickstun/anticipation | [see below](#anticipatory-music-transformer) |
+| REMI Tokenization                                 | 2020  | https://arxiv.org/pdf/2002.00212                                         | - | [see below](#REMI) |
+| TSD Tokenization                                  | 2023  | https://aclanthology.org/2023.emnlp-main.123                             | - | [see below](#TSD) |
+| MIDI-Like Tokenization                            | 2018  | https://arxiv.org/pdf/1808.03715                                         | - | [see below](#MIDI-like) |
 
 ### SingSong
 - Based on conditional generative modeling: Utilizes AudioLM as a foundational model but adapts it for generating instrumental music that aligns with vocal inputs.
@@ -232,3 +235,22 @@
   - Views music generation as a temporal point process where events (e.g., notes or chords) occur at specific time intervals. Each event is treated as a point in time, reflecting its timing and attributes like pitch, duration, and velocity.
   - Time-interval encoding: Encodes time intervals between successive events instead of using absolute time stamps, aligning with how humans perceive music rhythmically.
 - Trained on Lakh MIDI dataset
+
+## Tokenizers
+The following is a short description of 3 tokenization methods that Miditok offers as 'base' tokenizers for their MMM implementation. 
+
+### MIDI-like
+- Very similar to what MIDI messages actually look like.
+- Includes events like "NOTE_ON", "NOTE_OFF", "TIME_SHIFT", ...
+
+### REMI
+- Designed for POP music generation.
+- Represents notes as successions of Pitch, Velocity and Duration tokens, and time with Bar and Position tokens.
+  - Position the current position within the current bar.
+- Tempo Events encode tempo changes dynamically.
+- Chord Events add harmonic context for better music generation.
+- Captures expressive rhythmic and harmonic details.
+- Does not include "NOTE OFF" event, instead "DURATION".
+
+### TSD
+- Similar to MIDI-Like, but like REMI uses "DURATION" instead of "NOTE_OFF" tokens.
