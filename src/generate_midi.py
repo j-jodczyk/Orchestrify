@@ -15,7 +15,6 @@ from AI_GURU.token_sequence_helpers import token_sequence_to_note_sequence
 
 model_name_mapping = {
     "Bach_Horale": "Milos121/MMM_jsb_mmmbar",
-    "Bach_Jazz": "Milos121/transferLearning_JazzMidi_5e-5",
 }
 
 # todo: this will have to be resolved - should one tokenizer be universal for all datasets - I got different results from two :/
@@ -54,7 +53,7 @@ def verify_model(model_name):
 
 def get_end_time(score):
     """
-    TODO: there is a bug in this implementation - I don't think it works correctly
+    TODO: there is a bug in this implementation (or maybe more accurate would be to say: there is a bug in the logic of it) - I don't think it works correctly
     """
     bpm = 120
     for element in score.flat:
@@ -67,11 +66,16 @@ def get_end_time(score):
     return int(mps * seconds)
 
 def trim(score, start_time, end_time):
+    """
+    Trims the measures of the midi file
+    """
     return score.measures(start_time, end_time)
 
 def get_trimmed_instrument_score(score, picked_instrument_name=None):
     """
+    Separates the single instrument score from the midi file and trims it to be 5 seconds long
 
+    # TODO: time should not be hard coded
     """
     instrument_score = stream.Score()
     instrument_score.metadata = score.metadata
@@ -88,6 +92,9 @@ def get_trimmed_instrument_score(score, picked_instrument_name=None):
     return instrument_score
 
 def get_instrument_list(score):
+    """
+    Retrives the list of instruments from midi file
+    """
     return [score.parts[i].getInstrument() for i in range(len(score.parts))]
 
 def main():
