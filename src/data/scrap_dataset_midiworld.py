@@ -36,6 +36,10 @@ def download_midi_files(page_url):
                 midi_url = "https://www.midiworld.com" + midi_url
 
             filename = os.path.basename(midi_url)
+
+            if not filename.endswith(".mid"):
+                filename += ".mid"
+
             output_path = os.path.join(output_folder, filename)
 
             try:
