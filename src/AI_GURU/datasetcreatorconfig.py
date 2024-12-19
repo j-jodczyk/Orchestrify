@@ -14,6 +14,12 @@
 
 # Lint as: python3
 
+import os
+from source import logging
+
+logger = logging.create_logger("datasetcreatorconfig")
+
+
 class DatasetCreatorBaseConfig:
 
     def __init__(
@@ -25,44 +31,55 @@ class DatasetCreatorBaseConfig:
         hop_length_bars,
         density_bins_number,
         transpositions_train,
-        permute_tracks
-        ):
+        permute_tracks,
+    ):
 
         # Check if the datasetname is fine.
         if not isinstance(dataset_name, str):
             error_string = f"Config parameter dataset_name {dataset_name} must be a string."
+            logger.error(error_string)
             raise Exception(error_string)
 
         # Check if the encoding is fine.
         if not isinstance(encoding_method, str) and not callable(encoding_method):
             error_string = f"Config parameter encoding_method {encoding_method} must be a string or a method."
+            logger.error(error_string)
             raise Exception(error_string)
 
         # Check if the json data method is fine.
         if not isinstance(json_data_method, str) and not callable(json_data_method):
             error_string = f"Config parameter json_data_method {json_data_method} must be a string or a method."
+            logger.error(error_string)
             raise Exception(error_string)
 
         if not isinstance(window_size_bars, int) or window_size_bars == 0:
             error_string = f"Config parameter window_size_bars must be a non zero integer, but is {window_size_bars}."
+            logger.error(error_string)
             raise Exception(error_string)
 
         if not isinstance(hop_length_bars, int) or hop_length_bars == 0:
             error_string = f"Config parameter hop_length_bars must be a non zero integer, but is {hop_length_bars}."
+            logger.error(error_string)
             raise Exception(error_string)
 
         if not isinstance(density_bins_number, int) or density_bins_number == 0:
-            error_string = f"Config parameter density_bins_number must be a non zero integer, but is {density_bins_number}."
+            error_string = (
+                f"Config parameter density_bins_number must be a non zero integer, but is {density_bins_number}."
+            )
+            logger.error(error_string)
             raise Exception(error_string)
 
         if not isinstance(transpositions_train, list):
-            error_string = f"Config parameter transpositions_train must be a list of integers, but is {density_bins_number}."
+            error_string = (
+                f"Config parameter transpositions_train must be a list of integers, but is {density_bins_number}."
+            )
+            logger.error(error_string)
             raise Exception(error_string)
 
         if not isinstance(permute_tracks, bool):
             error_string = f"Config parameter permute_tracks must be a boolean, but is {permute_tracks}."
+            logger.error(error_string)
             raise Exception(error_string)
-
 
         # Assign.
         self.dataset_name = dataset_name
@@ -73,7 +90,6 @@ class DatasetCreatorBaseConfig:
         self.density_bins_number = density_bins_number
         self.transpositions_train = transpositions_train
         self.permute_tracks = permute_tracks
-
 
 
 class JSBDatasetCreatorTrackConfig(DatasetCreatorBaseConfig):
@@ -88,7 +104,7 @@ class JSBDatasetCreatorTrackConfig(DatasetCreatorBaseConfig):
             density_bins_number=5,
             transpositions_train=list(range(-12, 13)),
             permute_tracks=True,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -104,5 +120,5 @@ class JSBDatasetCreatorBarConfig(DatasetCreatorBaseConfig):
             density_bins_number=5,
             transpositions_train=list(range(-12, 13)),
             permute_tracks=True,
-            **kwargs
+            **kwargs,
         )

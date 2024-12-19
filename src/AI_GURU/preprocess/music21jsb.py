@@ -16,114 +16,138 @@
 
 import music21
 from music21 import converter
+from .. import logging
+from music21.midi import MidiFile
 from .preprocessutilities import events_to_events_data
+import os
+from concurrent.futures import ThreadPoolExecutor
+import threading
+
+logger = logging.create_logger("music21jsb")
+
+
+class ParseTimeoutError(Exception):
+    pass
+
+
+def parse_with_timeout(file_path):
+    result = [None]
+    exception = [None]
+
+    def parse_file():
+        try:
+            result[0] = converter.parse(file_path)
+        except Exception as e:
+            exception[0] = e
+
+    parse_thread = threading.Thread(target=parse_file)
+    parse_thread.start()
+    parse_thread.join()
+
+    if exception[0] is not None:
+        raise exception[0]
+
+    return result[0]
+
+
+def is_valid_midi(file_path):
+    try:
+        mf = MidiFile()
+        mf.open(file_path)
+        mf.read()
+        mf.close()
+        return True
+    except Exception as e:
+        logger.warning(f"Invalid MIDI file: {file_path}. Reason: {e}")
+        return False
 
 
 def preprocess_music21(midi_files):
-    # songs = list(corpus.chorales.Iterator()) -- this results in training on Bach chorales
-    songs = [converter.parse(midi_file) for midi_file in midi_files]
+    valid_midi_files = [file for file in midi_files if is_valid_midi(file)]
+
+    if not valid_midi_files:
+        return [], [], True
+
+    logger.info(f"Processing {len(valid_midi_files)} MIDI files.")
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        songs = list(executor.map(parse_midi_file, valid_midi_files))
+
+    songs = [song for song in songs if song is not None]
 
     split_index = int(0.8 * len(songs))
     songs_train = songs[:split_index]
     songs_valid = songs[split_index:]
+
     songs_data_train = preprocess_music21_songs(songs_train, train=True)
     songs_data_valid = preprocess_music21_songs(songs_valid, train=False)
 
-    return songs_data_train, songs_data_valid
+    return songs_data_train, songs_data_valid, False
+
+
+def parse_midi_file(midi_file):
+    try:
+        return parse_with_timeout(midi_file)
+    except ParseTimeoutError as e:
+        logger.warning(str(e))
+    except Exception as e:
+        logger.warning(f"Failed to parse MIDI file: {midi_file}. Reason: {e}")
+    return None
 
 
 def preprocess_music21_songs(songs, train):
-    #print("SONGS")
-
     songs_data = []
     for song in songs:
         song_data = preprocess_music21_song(song, train)
         if song_data is not None:
-            songs_data += [song_data]
+            songs_data.append(song_data)
 
     return songs_data
 
 
 def preprocess_music21_song(song, train):
-    #print("  SONG", song.metadata.title, song.metadata.number)
-
-    # Skip everything that has multiple measures and/or are not 4/4.
     meters = [meter.ratioString for meter in song.recurse().getElementsByClass(music21.meter.TimeSignature)]
     meters = list(set(meters))
     if len(meters) != 1:
+        logger.debug(f"Skipping because of multiple measures.")
         return None
     elif meters[0] != "4/4":
+        logger.debug(f"Skipping because of meter {meters[0]}.")
         return None
 
-    song_data = {}
-    song_data["title"] = song.metadata.title
-    song_data["number"] = song.metadata.number
-    song_data["tracks"] = []
-    for part_index, part in enumerate(song.parts):
-        track_data = preprocess_music21_part(part, part_index, train)
-        song_data["tracks"] += [track_data]
+    song_data = {
+        "title": song.metadata.title,
+        "number": song.metadata.number,
+        "tracks": [preprocess_music21_part(part, part_index, train) for part_index, part in enumerate(song.parts)],
+    }
 
     return song_data
 
 
 def preprocess_music21_part(part, part_index, train):
-    #print("    PART", part.partName)
+    track_data = {"name": part.partName, "number": part_index, "bars": []}
 
-    track_data = {}
-    track_data["name"] = part.partName
-    track_data["number"] = part_index
-    track_data["bars"] = []
-
-    for measure_index in range(1, 1000): # measure21 uses 1-based indexing for measures
+    for measure_index in range(1, 1000):  # music21 uses 1-based indexing for measures
         measure = part.measure(measure_index)
         if measure is None:
             break
 
         bar_data = preprocess_music21_measure(measure, train)
-        track_data["bars"] += [bar_data]
+        if not bar_data["events"]:
+            bar_data = {"events": [{"type": "TIME_DELTA", "delta": 4.0}]}
+
+        track_data["bars"].append(bar_data)
+
+    if not track_data["bars"]:
+        logger.debug(f"Track '{part.partName or 'Unknown'}' has no valid bars.")
     return track_data
 
 
 def preprocess_music21_measure(measure, train):
-    #print("      MEASURE")
-
-    bar_data = {}
-    bar_data["events"] = []
-
     events = []
     for note in measure.recurse(classFilter=("Note")):
-        #print("        NOTE", note.pitch.midi, note.offset, note.duration.quarterLength)
-        events += [("NOTE_ON", note.pitch.midi, 4 * note.offset)]
-        events += [("NOTE_OFF", note.pitch.midi, 4 * note.offset + 4 * note.duration.quarterLength)]
+        events.append(("NOTE_ON", note.pitch.midi, 4 * note.offset))
+        events.append(("NOTE_OFF", note.pitch.midi, 4 * note.offset + 4 * note.duration.quarterLength))
 
-    bar_data["events"] = events_to_events_data(events)
-    return bar_data
-
-    events = sorted(events, key=lambda event: event[2])
-    for event_index, event, event_next in zip(range(len(events)), events, events[1:] + [None]):
-        if event_index == 0 and event[2] != 0.0:
-            event_data = {
-                "type": "TIME_DELTA",
-                "delta": event[2]
-            }
-            bar_data["events"] += [event_data]
-
-        event_data = {
-            "type": event[0],
-            "pitch": event[1]
-        }
-        bar_data["events"] += [event_data]
-
-        if event_next is None:
-            continue
-
-        delta = event_next[2] - event[2]
-        assert delta >= 0, events
-        if delta != 0.0:
-            event_data = {
-                "type": "TIME_DELTA",
-                "delta": delta
-            }
-            bar_data["events"] += [event_data]
-
+    bar_data = {"events": events_to_events_data(events)}
     return bar_data
