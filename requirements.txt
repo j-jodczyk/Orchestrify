@@ -13,3 +13,5 @@ kagglehub
 music21
 note_seq
 black
+requests
+beautifulsoup4
