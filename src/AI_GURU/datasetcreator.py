@@ -20,9 +20,8 @@ from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import WhitespaceSplit
 from tokenizers.trainers import WordLevelTrainer
 from source import logging
-from source.preprocess.music21jsb import preprocess_music21
-from source.preprocess.encode import encode_songs_data, get_density_bins
-from source.preprocess.lakh_clean import preprocess_lakh_clean
+from .preprocess.music21jsb import preprocess_music21
+from .preprocess.encode import encode_songs_data, get_density_bins
 
 logger = logging.create_logger("datasetcreator")
 
