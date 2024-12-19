@@ -16,9 +16,9 @@
 
 import music21
 from music21 import converter
-from source import logging
+from .. import logging
 from music21.midi import MidiFile
-from source.preprocess.preprocessutilities import events_to_events_data
+from .preprocessutilities import events_to_events_data
 import os
 from concurrent.futures import ThreadPoolExecutor
 import threading
