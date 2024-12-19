@@ -12,3 +12,4 @@ note_seq
 kagglehub
 music21
 note_seq
+black
