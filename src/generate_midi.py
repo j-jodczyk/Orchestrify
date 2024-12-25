@@ -19,11 +19,10 @@ model_name_mapping = {
     "Lakh": "rasta3050/aiguru",
 }
 
-tokenizer_name_mapping = {
-    "Lakh": "Milos121/cleaner_lakh_MMM"
-}
+tokenizer_name_mapping = {"Lakh": "Milos121/cleaner_lakh_MMM"}
 
 TOKENIZER_FILENAME = "tokenizer.json"
+
 
 def verify_paths(path_to_midi, output_path):
     """
@@ -41,17 +40,22 @@ def verify_paths(path_to_midi, output_path):
         NotADirectoryError: If the output path is not a directory.
     """
     if not os.path.isfile(path_to_midi):
-        raise FileNotFoundError(f"The midi file at path '{path_to_midi}' does not exist.")
+        raise FileNotFoundError(
+            f"The midi file at path '{path_to_midi}' does not exist."
+        )
 
-    if not path_to_midi.endswith('.mid'):
+    if not path_to_midi.endswith(".mid"):
         raise InvalidFileFormatError("Input file must be of MIDI format")
 
     if not os.path.isdir(output_path):
         raise NotADirectoryError(f"The path '{output_path}' is not a valid directory.")
 
+
 def verify_model(model_name):
     if not model_name in model_name_mapping.keys():
-        raise UnknownModelError(f"{model_name} is not an available model. Available: {model_name_mapping.keys()}")
+        raise UnknownModelError(
+            f"{model_name} is not an available model. Available: {model_name_mapping.keys()}"
+        )
 
 
 def get_end_time(score):
@@ -65,14 +69,16 @@ def get_end_time(score):
             break
 
     seconds = 5
-    mps = bpm / (60 * 4) # for 4/4 tempo
+    mps = bpm / (60 * 4)  # for 4/4 tempo
     return int(mps * seconds)
+
 
 def trim(score, start_time, end_time):
     """
     Trims the measures of the midi file
     """
     return score.measures(start_time, end_time)
+
 
 def get_trimmed_instrument_score(score, picked_instrument_name=None):
     """
@@ -94,37 +100,39 @@ def get_trimmed_instrument_score(score, picked_instrument_name=None):
 
     return instrument_score
 
+
 def get_instrument_list(score):
     """
     Retrives the list of instruments from midi file
     """
     return [score.parts[i].getInstrument() for i in range(len(score.parts))]
 
+
 def generate_midi_score(midi, density, tokenizer_repo, model_repo):
     score = converter.parse(midi)
     song_data = preprocess_music21_song(score, train=False)
     parsed_midi = encode_song_data_singular(song_data, density)
 
-    tokenizer_path = hf_hub_download(repo_id=tokenizer_repo, filename=TOKENIZER_FILENAME, repo_type="dataset")
+    tokenizer_path = hf_hub_download(
+        repo_id=tokenizer_repo, filename=TOKENIZER_FILENAME, repo_type="dataset"
+    )
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_path)
-    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
     model = GPT2LMHeadModel.from_pretrained(model_repo)
 
-    input_ids = tokenizer.encode(' '.join(parsed_midi), return_tensors="pt")
-    generated_sequence = model.generate(
-        input_ids,
-        max_length=1000,
-        do_sample=True
-    )
+    input_ids = tokenizer.encode(" ".join(parsed_midi), return_tensors="pt")
+    generated_sequence = model.generate(input_ids, max_length=1000, do_sample=True)
     decoded_sequence = tokenizer.decode(generated_sequence[0])
 
-    generated_note_sequence = token_sequence_to_note_sequence(decoded_sequence, use_program=True, use_drums=True)
+    generated_note_sequence = token_sequence_to_note_sequence(
+        decoded_sequence, use_program=True, use_drums=True
+    )
     return generated_note_sequence
 
 
 def main():
-    with open('./src/generate_midi.json', 'r') as file: #TODO: relative path
+    with open("./src/generate_midi.json", "r") as file:  # TODO: relative path
         config = json.load(file)
 
     midi_path = config["midi_path"]
@@ -135,7 +143,7 @@ def main():
     try:
         verify_paths(midi_path, output_path)
         verify_model(model_name)
-    except (Exception) as e:
+    except Exception as e:
         print(f"Error: {e}")
         exit(1)
 
@@ -145,8 +153,12 @@ def main():
     instrument_list = get_instrument_list(score)
     instrument = None
     if len(instrument_list) > 1:
-        instrument_list_str = '\n'.join([i.instrumentName for i in instrument_list if i != None])
-        print(f"Provided midi file has more than one instrument. Please choose the one to use as base for generation:\n{instrument_list_str}")
+        instrument_list_str = "\n".join(
+            [i.instrumentName for i in instrument_list if i != None]
+        )
+        print(
+            f"Provided midi file has more than one instrument. Please choose the one to use as base for generation:\n{instrument_list_str}"
+        )
         while instrument is None or instrument not in instrument_list_str:
             instrument = input(">")
 
@@ -154,34 +166,38 @@ def main():
     song_data = preprocess_music21_song(instrument_score, False)
     parsed_midi = encode_song_data_singular(song_data, density)
 
-    tokenizer_path = hf_hub_download(repo_id=tokenizer_name_mapping[model_name], filename=TOKENIZER_FILENAME, repo_type="dataset")
+    tokenizer_path = hf_hub_download(
+        repo_id=tokenizer_name_mapping[model_name],
+        filename=TOKENIZER_FILENAME,
+        repo_type="dataset",
+    )
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_path)
-    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    tokenizer.add_special_tokens({"pad_token": "[PAD]"})
     model = GPT2LMHeadModel.from_pretrained(model_name_mapping[model_name])
 
-    input_ids = tokenizer.encode(' '.join(parsed_midi), return_tensors="pt")
-    generated_sequence = model.generate(
-        input_ids,
-        max_length=1000,
-        do_sample=True
-    )
+    input_ids = tokenizer.encode(" ".join(parsed_midi), return_tensors="pt")
+    generated_sequence = model.generate(input_ids, max_length=1000, do_sample=True)
     decoded_sequence = tokenizer.decode(generated_sequence[0])
     # stopped copying
 
+    data = {"original": " ".join(parsed_midi), "generated": decoded_sequence}
 
-    data = {
-        "original": ' '.join(parsed_midi),
-        "generated": decoded_sequence
-    }
-
-    with open(os.path.join(output_path, 'data.json'), 'w+') as f:
+    with open(os.path.join(output_path, "data.json"), "w+") as f:
         json.dump(data, f)
 
     # Save both original and generated
-    original_note_squence = token_sequence_to_note_sequence(' '.join(parsed_midi), use_program=True, use_drums=True)
-    generated_note_sequence = token_sequence_to_note_sequence(decoded_sequence, use_program=True, use_drums=True)
-    note_seq.note_seq.sequence_proto_to_midi_file(generated_note_sequence, os.path.join(output_path, "generated.mid"))
-    note_seq.note_seq.sequence_proto_to_midi_file(original_note_squence, os.path.join(output_path, "original.mid"))
+    original_note_squence = token_sequence_to_note_sequence(
+        " ".join(parsed_midi), use_program=True, use_drums=True
+    )
+    generated_note_sequence = token_sequence_to_note_sequence(
+        decoded_sequence, use_program=True, use_drums=True
+    )
+    note_seq.note_seq.sequence_proto_to_midi_file(
+        generated_note_sequence, os.path.join(output_path, "generated.mid")
+    )
+    note_seq.note_seq.sequence_proto_to_midi_file(
+        original_note_squence, os.path.join(output_path, "original.mid")
+    )
 
 
 if __name__ == "__main__":
