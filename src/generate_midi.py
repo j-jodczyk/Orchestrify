@@ -5,22 +5,25 @@ Script generates an orchestry enriched file form an input midi file and saves th
 import os
 import json
 import note_seq
-from errors import InvalidFileFormatError, UnknownModelError
+from .errors import InvalidFileFormatError, UnknownModelError
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 from music21 import converter, tempo, stream
-from AI_GURU.preprocess.music21jsb import preprocess_music21_song
-from AI_GURU.preprocess.encode import encode_song_data_singular
-from AI_GURU.token_sequence_helpers import token_sequence_to_note_sequence
+from huggingface_hub import hf_hub_download
+from .AI_GURU.preprocess.music21jsb import preprocess_music21_song
+from .AI_GURU.preprocess.encode import encode_song_data_singular
+from .AI_GURU.token_sequence_helpers import token_sequence_to_note_sequence
 
 
 model_name_mapping = {
     "Bach_Horale": "Milos121/MMM_jsb_mmmbar",
+    "Lakh": "rasta3050/aiguru",
 }
 
-# todo: this will have to be resolved - should one tokenizer be universal for all datasets - I got different results from two :/
-# for the final project we will most probably load them to hf
-# TODO: this is absolute path :/
-tokenizer_path = "/home/julia/WIMU/Orchestrify/data/external/Jazz Midi/jsb_mmmtrack/tokenizer.json"
+tokenizer_name_mapping = {
+    "Lakh": "Milos121/cleaner_lakh_MMM"
+}
+
+TOKENIZER_FILENAME = "tokenizer.json"
 
 def verify_paths(path_to_midi, output_path):
     """
@@ -97,6 +100,29 @@ def get_instrument_list(score):
     """
     return [score.parts[i].getInstrument() for i in range(len(score.parts))]
 
+def generate_midi_score(midi, density, tokenizer_repo, model_repo):
+    score = converter.parse(midi)
+    song_data = preprocess_music21_song(score, train=False)
+    parsed_midi = encode_song_data_singular(song_data, density)
+
+    tokenizer_path = hf_hub_download(repo_id=tokenizer_repo, filename=TOKENIZER_FILENAME, repo_type="dataset")
+    tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_path)
+    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+
+    model = GPT2LMHeadModel.from_pretrained(model_repo)
+
+    input_ids = tokenizer.encode(' '.join(parsed_midi), return_tensors="pt")
+    generated_sequence = model.generate(
+        input_ids,
+        max_length=1000,
+        do_sample=True
+    )
+    decoded_sequence = tokenizer.decode(generated_sequence[0])
+
+    generated_note_sequence = token_sequence_to_note_sequence(decoded_sequence, use_program=True, use_drums=True)
+    return generated_note_sequence
+
+
 def main():
     with open('./src/generate_midi.json', 'r') as file: #TODO: relative path
         config = json.load(file)
@@ -113,6 +139,7 @@ def main():
         print(f"Error: {e}")
         exit(1)
 
+    # coping from here
     score = converter.parse(midi_path)
 
     instrument_list = get_instrument_list(score)
@@ -127,6 +154,7 @@ def main():
     song_data = preprocess_music21_song(instrument_score, False)
     parsed_midi = encode_song_data_singular(song_data, density)
 
+    tokenizer_path = hf_hub_download(repo_id=tokenizer_name_mapping[model_name], filename=TOKENIZER_FILENAME, repo_type="dataset")
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_path)
     tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     model = GPT2LMHeadModel.from_pretrained(model_name_mapping[model_name])
@@ -135,9 +163,11 @@ def main():
     generated_sequence = model.generate(
         input_ids,
         max_length=1000,
-        temperature=0.5,
+        do_sample=True
     )
     decoded_sequence = tokenizer.decode(generated_sequence[0])
+    # stopped copying
+
 
     data = {
         "original": ' '.join(parsed_midi),
@@ -146,7 +176,6 @@ def main():
 
     with open(os.path.join(output_path, 'data.json'), 'w+') as f:
         json.dump(data, f)
-
 
     # Save both original and generated
     original_note_squence = token_sequence_to_note_sequence(' '.join(parsed_midi), use_program=True, use_drums=True)

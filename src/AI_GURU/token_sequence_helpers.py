@@ -46,7 +46,6 @@ def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=
     current_program = 1
     current_is_drum = False
     for token_index, token in enumerate(token_sequence):
-
         if token == "PIECE_START":
             pass
         elif token == "PIECE_END":
@@ -94,7 +93,11 @@ def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=
             current_time += delta
         elif token.startswith("DENSITY="):
             pass
-        elif token == "[PAD]" or token == "[UNK]":
+        elif (
+            token == "[PAD]" or
+            token == "[UNK]" or
+            token.startswith("FILL")
+        ):
             pass
         else:
             assert False, token
