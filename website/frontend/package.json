@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@fontsource/roboto": "^5.1.1",
+    "@tonejs/midi": "^2.0.28",
     "axios": "^1.7.9",
+    "formik": "^2.4.6",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-dropzone": "^14.3.5"
+    "react-dropzone": "^14.3.5",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
