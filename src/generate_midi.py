@@ -5,13 +5,13 @@ Script generates an orchestry enriched file form an input midi file and saves th
 import os
 import json
 import note_seq
-from .errors import InvalidFileFormatError, UnknownModelError
+from src.errors import InvalidFileFormatError, UnknownModelError
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 from music21 import converter, tempo, stream
 from huggingface_hub import hf_hub_download
-from .AI_GURU.preprocess.music21jsb import preprocess_music21_song
-from .AI_GURU.preprocess.encode import encode_song_data_singular
-from .AI_GURU.token_sequence_helpers import token_sequence_to_note_sequence
+from src.AI_GURU.preprocess.music21jsb import preprocess_music21_song
+from src.AI_GURU.preprocess.encode import encode_song_data_singular
+from src.AI_GURU.token_sequence_helpers import token_sequence_to_note_sequence
 
 
 model_name_mapping = {
@@ -128,9 +128,15 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo):
     generated_note_sequence = token_sequence_to_note_sequence(
         decoded_sequence, use_program=True, use_drums=True
     )
+
+    data = {"original": " ".join(parsed_midi), "generated": decoded_sequence}
+
+    # todo: delete (or more properly - change to logging)
+    with open(os.path.join("data.json"), "w+") as f:
+        json.dump(data, f)
     return generated_note_sequence
 
-
+# TODO: make this a package file, not a script
 def main():
     with open("./src/generate_midi.json", "r") as file:  # TODO: relative path
         config = json.load(file)

@@ -5,7 +5,7 @@ import io
 import os
 import note_seq
 import tempfile
-from models.models_list import models
+from src.models.models_list import models
 from src.generate_midi import generate_midi_score
 
 TOKENIZER_FILENAME = "tokenizer.json"

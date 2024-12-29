@@ -1,14 +1,23 @@
 import json
-from fastapi import FastAPI, Request, UploadFile, Response, status
+from fastapi import FastAPI, Request, UploadFile, Response
+from fastapi.middleware.cors import CORSMiddleware
 from handlers.get_models import handle_get_models
 from handlers.generate_midi import GenerateParams, handle_generate_midi
 
 app = FastAPI()
 
-# we need a way to
-# - get all available models
-# - upload a file to generate
+origins = [
+    "http://localhost",
+    "http://localhost:3000"
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():

@@ -38,7 +38,7 @@ def encode_song_data_singular(song_data, density):
     encode_song_data, which is used to encode a song that is a part of
     a greater dataset.
 
-    NOTE: Doesn't give the option of bar fill, since our project is not focued on that
+    NOTE: Doesn't give the option of bar fill, since our project is not focused on that
     """
     token_sequences = []
 
