@@ -1,18 +1,30 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useDropzone } from 'react-dropzone';
-import { Midi } from '@tonejs/midi'
-import { error } from 'console';
+import { toast, ToastContainer, ToastOptions } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+// TODO: docs
+
+const MAX_FILE_SIZE = 50 * 1024; // 5KB
 
 interface FormValues {
   density: string;
   model: string;
   file: File | null;
+}
+
+export interface MidiData {
+  blob: Blob,
+  fileName: string | null
+  fileUrl: string
+}
+
+interface UploadFormProps {
+  onFormSubmit: (res: MidiData) => void;
 }
 
 const validationSchema = Yup.object({
@@ -21,13 +33,25 @@ const validationSchema = Yup.object({
     .max(1, 'Density must not exceed 1')
     .required('Density is required'),
   model: Yup.string().required('Model selection is required'),
-  file: Yup.mixed().required('File is required'),
+  file: Yup.mixed()
+    .required('File is required')
+    .test('fileSize', 'File size is too large, maximum size is 50 kB', (value: any) => {
+      return value && value.size <= MAX_FILE_SIZE;
+    })
 });
 
+const toastErrorParams: ToastOptions =  {
+  position: 'top-center',
+  autoClose: 5000,
+  closeOnClick: true,
+  pauseOnHover: true,
+  hideProgressBar: true
+}
 
-const UploadForm: React.FC = () => {
+const UploadForm: React.FC<UploadFormProps> = ({ onFormSubmit }) => {
   const [serverResponse, setServerResponse] = useState<string | null>(null);
-  const [models, setModels] = useState([]);
+  const [models, setModels] = useState<Array<string>>([]);
+  const [midiBlob, setMidiBlob] = useState<Blob | null>(null);
 
   useEffect(() => {
     fetch('http://localhost:8000/models', {
@@ -36,8 +60,13 @@ const UploadForm: React.FC = () => {
     .then(response => response.json())
     .then(jsonResponse => {
       setModels(jsonResponse.models) // todo: error handling
+    })
+    .catch((err: any) => {
+      toast.error('Failed to fetch models list', toastErrorParams);
     });
-  }, [])
+  }, []);
+
+
 
   return (
     <div className='m-8'>
@@ -50,9 +79,10 @@ const UploadForm: React.FC = () => {
         validationSchema={validationSchema}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           const formData = new FormData();
+          const file = values.file as File
           formData.append('model', values.model);
           formData.append('density', values.density.toString());
-          formData.append('file', values.file as File);
+          formData.append('file', file);
 
           try {
             const response = await fetch('http://localhost:8000/generate', {
@@ -61,15 +91,24 @@ const UploadForm: React.FC = () => {
             });
 
             if (!response.ok) {
-              throw new Error(`Server responded with status ${response.status}`);
+              const responseJson = await response.json();
+              toast.error(`Error generating file: ${responseJson.detail}`, toastErrorParams);
+              return;
             }
 
-            const midiBlob = await response.blob();
-            const midiUrl = URL.createObjectURL(midiBlob);
+            const midiResBlob = await response.blob();
+            setMidiBlob(midiResBlob);
+            const midiUrl = URL.createObjectURL(midiResBlob);
 
             setServerResponse(midiUrl);
+            onFormSubmit({
+              blob: midiResBlob,
+              fileName: file.name,
+              fileUrl: midiUrl,
+            });
           } catch(err: any) {
-            setServerResponse(`Error: ${err.message}`);
+            console.log(err);
+            toast.error(`Failed to generate midi file`, toastErrorParams);
           } finally {
             setSubmitting(false);
             resetForm();
@@ -77,14 +116,14 @@ const UploadForm: React.FC = () => {
         }}
         >
           {({ setFieldValue, isSubmitting, values }) => {
-          const { getRootProps, getInputProps, isDragActive } = useDropzone({
+          const { getRootProps, getInputProps } = useDropzone({
             onDrop: (acceptedFiles: File[]) => {
               if (acceptedFiles.length > 0) {
                 setFieldValue('file', acceptedFiles[0]);
               }
             },
             multiple: false,
-            accept: '.midi,.mid',
+            accept: { 'audio/midi': ['.midi', '.mid'] },
           });
 
           return (
@@ -126,7 +165,7 @@ const UploadForm: React.FC = () => {
               </div>
 
               <div
-              className='h-56 bg-[hsl(245,23%,72%,20%)] m-6 p-8 text-center content-center rounded-lg w-full'
+              className='h-56 bg-[hsl(245,23%,72%,20%)] mt-6 p-8 text-center content-center rounded-lg w-full'
                 {...getRootProps()}
               >
                 <input {...getInputProps()} />
@@ -136,43 +175,20 @@ const UploadForm: React.FC = () => {
                   <p>Drag and drop a file here, or click to select one</p>
                 )}
               </div>
-              <ErrorMessage name="file" component="div" />
+              <ErrorMessage name="file" component="div" className='text-primary-300 text-center'/>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className='bg-accent-300 text-center w-40 p-2 rounded-lg'
+                className='bg-accent-300 text-center w-40 p-2 rounded-lg mt-6'
               >
                 {isSubmitting ? 'LOADING...' : 'GENERATE'}
               </button>
-
-              {/* Server Response */}
-              {serverResponse && (
-                <div              >
-                  {serverResponse.startsWith('Error') ? (
-                    serverResponse
-                  ) : (
-                    <div className='flex gap-4'>
-                      <div className='bg-secondary-300 text-center w-40 p-2 rounded-lg my-10'>
-                        {/* TODO: actually play */}
-                          PLAY
-                      </div>
-                      <div className='bg-secondary-300 text-center w-40 p-2 rounded-lg my-10'>
-                        <a
-                          href={serverResponse}
-                          download="generated.mid"
-                        >
-                          DOWNLOAD
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
             </Form>
           );
         }}
         </Formik>
+        <ToastContainer />
       </div>
   )
 }

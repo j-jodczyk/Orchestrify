@@ -17,6 +17,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.5",
+    "react-toastify": "^11.0.2",
+    "tone": "^15.0.4",
     "yup": "^1.6.1"
   },
   "devDependencies": {

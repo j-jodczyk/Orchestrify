@@ -23,6 +23,8 @@ class GenerateParams(BaseModel):
 
 
 async def handle_generate_midi(form_data: dict, file: UploadFile = File(...)):
+    temp_filepath = ''
+    temp_generated_filepath = ''
     generate_params = GenerateParams(**form_data)
     repos = models[generate_params.model]
 
@@ -55,11 +57,13 @@ async def handle_generate_midi(form_data: dict, file: UploadFile = File(...)):
             headers={"Content-Disposition": "attachment; filename=generated.mid"},
         )
 
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=f"The file is too large, please try with a smaller file.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
     finally:
-        if os.path.exists(temp_filepath):
+        if temp_filepath != '' and os.path.exists(temp_filepath):
             os.remove(temp_filepath)
-        if os.path.exists(temp_generated_filepath):
+        if temp_generated_filepath != '' and os.path.exists(temp_generated_filepath):
             os.remove(temp_generated_filepath)

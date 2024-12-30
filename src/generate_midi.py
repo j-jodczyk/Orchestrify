@@ -129,11 +129,6 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo):
         decoded_sequence, use_program=True, use_drums=True
     )
 
-    data = {"original": " ".join(parsed_midi), "generated": decoded_sequence}
-
-    # todo: delete (or more properly - change to logging)
-    with open(os.path.join("data.json"), "w+") as f:
-        json.dump(data, f)
     return generated_note_sequence
 
 # TODO: make this a package file, not a script

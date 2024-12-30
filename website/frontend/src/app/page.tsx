@@ -1,15 +1,18 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useState } from 'react';
 import '@fontsource/roboto';
-import UploadForm from './components/UploadForm';
+import UploadForm, { MidiData } from './components/UploadForm';
+import PlayButton from './components/PlayButton';
 
-
-
-// TODO: display error and success messages
 
 const HomePage: React.FC = () => {
+  const [midiData, setMidiData] = useState<MidiData|null>(null);
+
+  const onFormSubmit = async (respData: MidiData) => {
+    setMidiData(respData);
+  }
+
   return (
     <div
       className='bg-background-800 h-screen text-white font-roboto content-center justify-items-center'
@@ -20,33 +23,23 @@ const HomePage: React.FC = () => {
         ORCHESTRIFY
       </h1>
       <p className='text-center text-accent-200 pt-8'>Create an accompaniament for a midi file!</p>
-      {/* TODO: at the beginning fetch models and give choice of them */}
-      <UploadForm />
-
-      {
-      // midiUrl && (
-      //   <div className='flex gap-2 mt-10'>
-      //     {/* TODO: this does not work */}
-      //     <button
-      //       onClick={() => {
-      //         const audio = new Audio(midiUrl);
-      //         audio.play();
-      //       }}
-      //       className='bg-accent-300 text-center w-40 p-2 rounded-lg'
-      //     >
-      //       Play MIDI
-      //     </button>
-      //     <button
-      //       className='bg-accent-300 text-center w-40 p-2 rounded-lg'
-      //     ><a
-      //       href={midiUrl}
-      //       download="generated.mid"
-      //     >
-      //       Download MIDI
-      //     </a></button>
-      //   </div>
-      // )
-      }
+      <UploadForm onFormSubmit={onFormSubmit}/>
+      {midiData && (
+        <div>
+          <p>Generated accompaniament for original file {midiData.fileName}</p>
+          <div className='flex gap-4 justify-center'>
+            <PlayButton midiBlob={midiData.blob} />
+            <div className='bg-secondary-300 text-center w-40 p-2 rounded-lg my-10'>
+              <a
+                href={midiData.fileUrl}
+                download="generated.mid"
+              >
+                DOWNLOAD
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
