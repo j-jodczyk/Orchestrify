@@ -11,11 +11,28 @@ logger = logging.getLogger("filter_midi")
 
 
 class ParseTimeoutError(Exception):
+    """
+    Custom exception for MIDI parsing timeout.
+    We don't want parsing timeout to affect the running of the script, so the Error is handled quietly.
+    """
     pass
-
 
 # Code for filtering MIDI files from a dataset based on their parsing time or other issues.
 def parse_with_timeout(file_path, timeout=5):
+    """
+    Parses a MIDI file within a specified timeout.
+
+    Args:
+        file_path (str): Path to the MIDI file to parse.
+        timeout (int, optional): Maximum allowed parsing time in seconds. Defaults to 5.
+
+    Returns:
+        music21.stream.Score: Parsed MIDI file.
+
+    Raises:
+        ParseTimeoutError: If parsing exceeds the specified timeout.
+        Exception: If an error occurs during parsing.
+    """
     result = [None]
     exception = [None]
 
@@ -40,6 +57,15 @@ def parse_with_timeout(file_path, timeout=5):
 
 
 def is_valid_midi(file_path):
+    """
+    Checks if a MIDI file is valid.
+
+    Args:
+        file_path (str): Path to the MIDI file to validate.
+
+    Returns:
+        bool: True if the file is a valid MIDI, False otherwise.
+    """
     try:
         mf = MidiFile()
         mf.open(file_path)
@@ -52,6 +78,15 @@ def is_valid_midi(file_path):
 
 
 def find_midi_files(directories):
+    """
+    Recursively searches directories for MIDI files.
+
+    Args:
+        directories (list of str): List of directory paths to search.
+
+    Returns:
+        list of str: List of paths to found MIDI files.
+    """
     midi_files = []
     for directory in directories:
         for root, _, files in os.walk(directory):
@@ -62,6 +97,16 @@ def find_midi_files(directories):
 
 
 def process_midi_file(midi_file, output_directory):
+    """
+    Processes a MIDI file, validates and parses it, and copies it to the output directory if valid.
+
+    Args:
+        midi_file (str): Path to the MIDI file to process.
+        output_directory (str): Directory to copy valid MIDI files.
+
+    Returns:
+        str or None: Path to the copied file if successful, otherwise None.
+    """
     if not is_valid_midi(midi_file):
         return None
 
@@ -80,6 +125,17 @@ def process_midi_file(midi_file, output_directory):
 
 
 def filter_and_collect_midi(midi_files, output_directory, max_workers=4):
+    """
+    Filters and processes a list of MIDI files, copying valid ones to the output directory.
+
+    Args:
+        midi_files (list of str): List of MIDI file paths to process.
+        output_directory (str): Directory to store processed MIDI files.
+        max_workers (int, optional): Number of threads to use for concurrent processing. Defaults to 4.
+
+    Returns:
+        list of str: List of paths to successfully processed MIDI files.
+    """
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 

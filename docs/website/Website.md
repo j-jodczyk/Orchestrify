@@ -4,6 +4,7 @@ Website allows you to easily try out all models. To get it running locally:
 * If you're going to run backend service locally without Docker, you'll have to install requirements for the main project by running `pip3 install requirements.txt` in root directory.
 *
 TODO npm version, create requirements.txt also for backend
+TODO describe what density is
 ## Backend
 1. Navigate to `/website/backend`
 2. Install dependencies with `pip3 install requirements.txt`

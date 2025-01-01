@@ -29,6 +29,8 @@ nav:
     - API Reference: website/APIReference.md
   - Literature: LiteratureOverview.md
   - Project Reference:
+    - Data: Data.md
+    - Models: Models.md
     - Website Backend: website/WebsiteBackend.md
   - Project Progress:
     - Design Proposal: DesignProposal.md
