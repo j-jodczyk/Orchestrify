@@ -11,7 +11,6 @@
   "dependencies": {
     "@fontsource/roboto": "^5.1.1",
     "@tonejs/midi": "^2.0.28",
-    "axios": "^1.7.9",
     "formik": "^2.4.6",
     "next": "15.1.2",
     "react": "^19.0.0",
