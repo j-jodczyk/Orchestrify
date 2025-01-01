@@ -17,7 +17,7 @@ export default function RootLayout({
           <Link href="/" style={{ textDecoration: 'none' }}>
             Home
           </Link>
-          <Link href="/docs" style={{ textDecoration: 'none' }}>
+          <Link href="http://localhost:8002" style={{ textDecoration: 'none' }}>
             Documentation
           </Link>
         </nav>

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ValidationError, field_validator
-from fastapi import FastAPI, File, Form, UploadFile, Depends, Request, HTTPException
+from fastapi import FastAPI, File, Form, UploadFile, Depends, Request, HTTPException, Field
 from fastapi.responses import StreamingResponse
 import io
 import os
@@ -12,8 +12,15 @@ TOKENIZER_FILENAME = "tokenizer.json"
 
 
 class GenerateParams(BaseModel):
+    """
+    Parameters for generating MIDI.
+
+    Attributes:
+        model (str): The name of the model to use for generation. Must be in the list of available models.
+        density (float): A density value for the generation process, must be between 0 and 1.
+    """
     model: str
-    density: float = Form(...)
+    density: float = Field(..., ge=0, le=1, description="Density value must be between 0 and 1.")
 
     @field_validator("model")
     def model_should_be_in_model_list(cls, model):
@@ -23,6 +30,19 @@ class GenerateParams(BaseModel):
 
 
 async def handle_generate_midi(form_data: dict, file: UploadFile = File(...)):
+    """
+    Handles the generation of MIDI files from uploaded input.
+
+    Args:
+        form_data (dict): Form data containing the generation parameters.
+        file (UploadFile): An uploaded MIDI file to be processed.
+
+    Returns:
+        StreamingResponse: A streaming response containing the generated MIDI file.
+
+    Raises:
+        HTTPException: If the file is too large or an error occurs during processing.
+    """
     temp_filepath = ''
     temp_generated_filepath = ''
     generate_params = GenerateParams(**form_data)

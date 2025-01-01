@@ -27,11 +27,27 @@ async def root():
 
 @app.get("/models")
 async def get_models():
+    """
+    Endpoint to retrieve available models.
+
+    Returns:
+        list: A list of available models, as returned by `handle_get_models`.
+    """
     return handle_get_models()
 
 
 @app.post("/generate/")
 async def generate_midi(request: Request, file: UploadFile = None):
+    """
+    Endpoint to generate MIDI files from provided data and file.
+
+    Args:
+        request (Request): The HTTP request containing form data.
+        file (UploadFile, optional): An uploaded file object. Defaults to None.
+
+    Returns:
+        Response: A JSON response indicating success or failure of the operation.
+    """
     if file is None:
         return Response(
             content=json.dumps({"success": False, "message": "Missing file"}),
