@@ -3,6 +3,19 @@ from music21 import converter, midi, note
 
 # Code used to analyze the impact of adding a TIME_DELTA of 4.0 to previously empty bars in MIDI files.
 def analyze_midi_file(file_path, output_path):
+    """
+    Analyzes a MIDI file and modifies empty bars by adding a TIME_DELTA event. Saves the modified MIDI to the specified output path.
+
+    Args:
+        file_path (str): The path to the original MIDI file to analyze and modify.
+        output_path (str): The path to save the modified MIDI file.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If an error occurs during file processing.
+    """
     try:
         song = converter.parse(file_path)
 

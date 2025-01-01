@@ -1,0 +1,37 @@
+site_name: Orchestrify Docs
+
+dev_addr: 127.0.0.1:8002
+
+theme:
+  name: "readthedocs"
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - mkdocstrings
+  - search
+  - neoteroi.mkdocsoad:
+      use_pymdownx: true
+
+extra_css:
+  - css/mkdocsoad.css
+
+nav:
+  - Home: index.md
+  - Set Up: SetUp.md
+  - Website:
+    - Running Locally: website/Website.md
+    - API Reference: website/APIReference.md
+  - Literature: LiteratureOverview.md
+  - Project Reference:
+    - Data: Data.md
+    - Models: Models.md
+    - Website Backend: website/WebsiteBackend.md
+  - Project Progress:
+    - Design Proposal: DesignProposal.md
+    - Project Update: ProjectUpdate.md

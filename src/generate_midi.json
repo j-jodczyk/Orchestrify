@@ -1,6 +1,0 @@
-{
-    "midi_path": "/home/julia/WIMU/Orchestrify/data/external/Jazz Midi/Think.mid",
-    "model": "Bach_Horale",
-    "output_path": "/home/julia/WIMU/Orchestrify/generated",
-    "density": 0.5
-}

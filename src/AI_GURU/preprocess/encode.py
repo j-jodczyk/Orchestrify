@@ -38,7 +38,7 @@ def encode_song_data_singular(song_data, density):
     encode_song_data, which is used to encode a song that is a part of
     a greater dataset.
 
-    NOTE: Doesn't give the option of bar fill, since our project is not focued on that
+    NOTE: Doesn't give the option of bar fill, since our project is not focused on that
     """
     token_sequences = []
 
@@ -183,24 +183,14 @@ def encode_track_data(track_data, density_bins, bar_start_index, bar_end_index, 
     return tokens
 
 
-def encode_bar_data(bar_data, transposition, bar_fill=False):
+def encode_bar_data(bar_data, transposition):
     tokens = []
+    tokens += ["BAR_START"]
 
-    if not bar_fill:
-        tokens += ["BAR_START"]
-    else:
-        tokens += ["FILL_START"]
+    for event_data in bar_data["events"]:
+        tokens += [encode_event_data(event_data, transposition)]
 
-    if bar_data["events"] == "bar_fill":
-        tokens += ["FILL_IN"]
-    else:
-        for event_data in bar_data["events"]:
-            tokens += [encode_event_data(event_data, transposition)]
-
-    if not bar_fill:
-        tokens += ["BAR_END"]
-    else:
-        tokens += ["FILL_END"]
+    tokens += ["BAR_END"]
 
     return tokens
 

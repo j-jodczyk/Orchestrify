@@ -4,6 +4,16 @@ import shutil
 
 # Code for shortening the .mid file paths, as their lengths were too long for Windows.
 def shorten_path_name(original_path, max_length=250):
+    """
+    Shortens a file path to ensure its total length does not exceed the specified maximum length.
+
+    Args:
+        original_path (str): The original file path.
+        max_length (int, optional): The maximum allowed length of the path. Defaults to 250.
+
+    Returns:
+        str: The shortened file path.
+    """
     path_parts = original_path.split(os.sep)
 
     shortened_parts = []
@@ -21,6 +31,17 @@ def shorten_path_name(original_path, max_length=250):
 
 
 def extract_and_shorten_paths(zip_file, output_dir, max_length=250):
+    """
+    Extracts files from a ZIP archive, shortening their paths if necessary.
+
+    Args:
+        zip_file (str): Path to the ZIP file to extract.
+        output_dir (str): Directory to extract the files to.
+        max_length (int, optional): Maximum allowed length for extracted file paths. Defaults to 250.
+
+    Returns:
+        None
+    """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 

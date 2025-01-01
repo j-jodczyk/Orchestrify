@@ -1,0 +1,179 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/models": {
+            "get": {
+                "summary": "Get Models",
+                "description": "Returns a list of available models for midi generation",
+                "operationId": "get_models_models_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "models": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "models"
+                                    ],
+                                    "example": {
+                                        "models": [
+                                            "Lakh",
+                                            "Pop",
+                                            "Rock"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/": {
+            "post": {
+                "summary": "Generate MIDI",
+                "description": "Generates a MIDI file based on the uploaded input file and parameters.",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "The MIDI file to be processed."
+                                    },
+                                    "model": {
+                                        "type": "string",
+                                        "description": "The name of the model to use.",
+                                        "enum": [
+                                            "Lakh",
+                                            "Rock",
+                                            "Pop"
+                                        ]
+                                    },
+                                    "density": {
+                                        "type": "number",
+                                        "description": "The density parameter for MIDI generation.",
+                                        "minimum": 0,
+                                        "maximum": 1
+                                    }
+                                },
+                                "required": [
+                                    "file",
+                                    "model",
+                                    "density"
+                                ]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated MIDI file.",
+                        "content": {
+                            "audio/midi": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "Content-Disposition": {
+                                "description": "Indicates that the response contains an attachment.",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Missing or invalid file in the request.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Missing file"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error while processing the file.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "detail": {
+                                            "type": "string",
+                                            "example": "Error processing file: <error_message>"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "GenerateParams": {
+                "type": "object",
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "description": "The name of the model to use.",
+                        "enum": [
+                            "Lakh",
+                            "Rock",
+                            "Pop"
+                        ]
+                    },
+                    "density": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Density value must be between 0 and 1."
+                    },
+                    "file": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "The MIDI file to be processed."
+                    }
+                },
+                "required": [
+                    "model",
+                    "density"
+                ]
+            }
+        }
+    }
+}

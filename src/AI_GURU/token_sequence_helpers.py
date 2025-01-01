@@ -37,6 +37,15 @@ def empty_note_sequence(qpm=120.0, total_time=0.0):
     note_sequence.total_time = total_time
     return note_sequence
 
+def getDelta(time_delta: str):
+    if "/" not in time_delta:
+        delta = float(time_delta)
+    else:
+        # common fraction --> needs to be handled with more care
+        num, denom = time_delta.split("/")
+        delta = int(num) / int(denom)
+    return delta * NOTE_LENGTH_16TH_120BPM
+
 def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=True):
 
     if isinstance(token_sequence, str):
@@ -46,7 +55,6 @@ def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=
     current_program = 1
     current_is_drum = False
     for token_index, token in enumerate(token_sequence):
-
         if token == "PIECE_START":
             pass
         elif token == "PIECE_END":
@@ -90,11 +98,15 @@ def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=
                 note = current_notes[pitch]
                 note.end_time = current_time
         elif token.startswith("TIME_DELTA"):
-            delta = float(token.split("=")[-1]) * NOTE_LENGTH_16TH_120BPM
+            delta = getDelta(token.split("=")[-1])
             current_time += delta
         elif token.startswith("DENSITY="):
             pass
-        elif token == "[PAD]" or token == "[UNK]":
+        elif (
+            token == "[PAD]" or
+            token == "[UNK]" or
+            token.startswith("FILL")
+        ):
             pass
         else:
             assert False, token
