@@ -5,6 +5,11 @@ File containing the code for reading the database, parsing, tokenizing, and trai
 import kagglehub
 import os
 import sys
+
+# Sometimes, it may be necessary to add the project root to ensure the imports work correctly
+# project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+# sys.path.insert(0, project_root)
+
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 
 from src.data.make_dataset import make_dataset
@@ -43,7 +48,7 @@ def train_model(
         None
     """
     print("Preparing dataset...")
-    make_dataset(dataset_path, overwrite=True)
+    make_dataset(dataset_path, overwrite=False)
     print("Dataset prepared")
 
     trainer_config = MMMTrainerBaseConfig(

@@ -1,6 +1,6 @@
 
-from AI_GURU.datasetcreator import DatasetCreator
-from AI_GURU.datasetcreatorconfig import JSBDatasetCreatorBarConfig
+from src.AI_GURU.datasetcreator import DatasetCreator
+from src.AI_GURU.datasetcreatorconfig import JSBDatasetCreatorBarConfig
 
 def make_dataset(datasets_path: str, overwrite: bool=False):
 	dataset_creator_config = JSBDatasetCreatorBarConfig()

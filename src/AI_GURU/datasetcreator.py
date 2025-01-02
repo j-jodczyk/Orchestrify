@@ -35,6 +35,9 @@ class DatasetCreator:
         # Ensure dataset paths exist
         dataset_path = self.__prepare_paths(datasets_path, overwrite)
 
+        if dataset_path is None and not overwrite:
+            return
+
         # Prepare for getting music data as JSON
         json_data_method, preprocess_with_music21 = self.__resolve_json_data_method()
 
@@ -55,7 +58,7 @@ class DatasetCreator:
         dataset_path = os.path.join(datasets_path, self.config.dataset_name)
         if os.path.exists(dataset_path) and not overwrite:
             logger.info("Dataset already exists.")
-            return
+            return None
 
         if not os.path.exists(dataset_path):
             os.makedirs(dataset_path)
@@ -86,7 +89,7 @@ class DatasetCreator:
     def __process_with_music21(self, all_midi_files, dataset_path, overwrite):
         batch_size = 100
         total_batches = (len(all_midi_files) + batch_size - 1) // batch_size
-
+        print(dataset_path)
         train_file_path = os.path.join(dataset_path, "token_sequences_train.txt")
         valid_file_path = os.path.join(dataset_path, "token_sequences_valid.txt")
 
