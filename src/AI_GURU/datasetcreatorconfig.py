@@ -15,9 +15,9 @@
 # Lint as: python3
 
 import os
-from source import logging
+from AI_GURU.logging import create_logger
 
-logger = logging.create_logger("datasetcreatorconfig")
+logger = create_logger("datasetcreatorconfig")
 
 
 class DatasetCreatorBaseConfig:

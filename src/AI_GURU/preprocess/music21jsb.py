@@ -19,7 +19,6 @@ from music21 import converter
 from .. import logging
 from music21.midi import MidiFile
 from .preprocessutilities import events_to_events_data
-import os
 from concurrent.futures import ThreadPoolExecutor
 import threading
 
@@ -79,8 +78,8 @@ def preprocess_music21(midi_files):
     songs_train = songs[:split_index]
     songs_valid = songs[split_index:]
 
-    songs_data_train = preprocess_music21_songs(songs_train, train=True)
-    songs_data_valid = preprocess_music21_songs(songs_valid, train=False)
+    songs_data_train = preprocess_music21_songs(songs_train)
+    songs_data_valid = preprocess_music21_songs(songs_valid)
 
     return songs_data_train, songs_data_valid, False
 
@@ -95,17 +94,17 @@ def parse_midi_file(midi_file):
     return None
 
 
-def preprocess_music21_songs(songs, train):
+def preprocess_music21_songs(songs):
     songs_data = []
     for song in songs:
-        song_data = preprocess_music21_song(song, train)
+        song_data = preprocess_music21_song(song)
         if song_data is not None:
             songs_data.append(song_data)
 
     return songs_data
 
 
-def preprocess_music21_song(song, train):
+def preprocess_music21_song(song):
     meters = [meter.ratioString for meter in song.recurse().getElementsByClass(music21.meter.TimeSignature)]
     meters = list(set(meters))
     if len(meters) != 1:
@@ -118,13 +117,13 @@ def preprocess_music21_song(song, train):
     song_data = {
         "title": song.metadata.title,
         "number": song.metadata.number,
-        "tracks": [preprocess_music21_part(part, part_index, train) for part_index, part in enumerate(song.parts)],
+        "tracks": [preprocess_music21_part(part, part_index) for part_index, part in enumerate(song.parts)],
     }
 
     return song_data
 
 
-def preprocess_music21_part(part, part_index, train):
+def preprocess_music21_part(part, part_index):
     track_data = {"name": part.partName, "number": part_index, "bars": []}
 
     for measure_index in range(1, 1000):  # music21 uses 1-based indexing for measures
@@ -132,7 +131,7 @@ def preprocess_music21_part(part, part_index, train):
         if measure is None:
             break
 
-        bar_data = preprocess_music21_measure(measure, train)
+        bar_data = preprocess_music21_measure(measure)
         if not bar_data["events"]:
             bar_data = {"events": [{"type": "TIME_DELTA", "delta": 4.0}]}
 
@@ -143,7 +142,7 @@ def preprocess_music21_part(part, part_index, train):
     return track_data
 
 
-def preprocess_music21_measure(measure, train):
+def preprocess_music21_measure(measure):
     events = []
     for note in measure.recurse(classFilter=("Note")):
         events.append(("NOTE_ON", note.pitch.midi, 4 * note.offset))

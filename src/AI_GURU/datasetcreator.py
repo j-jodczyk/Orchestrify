@@ -15,11 +15,11 @@
 # Lint as: python3
 
 import os
+from . import logging
 from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import WhitespaceSplit
 from tokenizers.trainers import WordLevelTrainer
-from source import logging
 from .preprocess.music21jsb import preprocess_music21
 from .preprocess.encode import encode_songs_data, get_density_bins
 
@@ -72,9 +72,14 @@ class DatasetCreator:
             raise Exception(error_string)
 
     def __get_all_midi_files(self, datasets_path):
+        midi_files_path = os.path.join(datasets_path, "midi_files")
+
+        if not os.path.exists(midi_files_path):
+            raise FileNotFoundError("Please create a 'midi_files' folder with all the MIDI files.")
+
         return [
-            os.path.join(os.path.join(datasets_path, "midi_files"), f)
-            for f in os.listdir(os.path.join(datasets_path, "midi_files"))
+            os.path.join(midi_files_path, f)
+            for f in os.listdir(midi_files_path)
             if f.endswith(".mid")
         ]
 

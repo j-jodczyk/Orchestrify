@@ -225,6 +225,9 @@ def get_density_bins(songs_data, window_size_bars, hop_length_bars, bins):
                 # Do not count empty tracks.
                 if count != 0:
                     distribution += [count]
+                    
+    if len(distribution) == 0:
+        raise ValueError("Density distribution is empty. Ensure training data contains valid songs.")
 
     # Compute the quantiles, which will become the density bins.
     quantiles = []

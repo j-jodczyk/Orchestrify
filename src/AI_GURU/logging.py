@@ -14,7 +14,7 @@
 
 # Lint as: python3
 
-import logging
+import logging as std_logging
 
 loggers_dict = {}
 
@@ -24,12 +24,12 @@ def create_logger(name: str):
     if name in loggers_dict:
         return loggers_dict[name]
     else:
-        logger = logging.getLogger(name)
+        logger = std_logging.getLogger(name)
         loggers_dict[name] = logger
-        logger.setLevel(logging.DEBUG)
-        handler = logging.StreamHandler()
-        handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        logger.setLevel(std_logging.DEBUG)
+        handler = std_logging.StreamHandler()
+        handler.setLevel(std_logging.DEBUG)
+        formatter = std_logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.propagate = False

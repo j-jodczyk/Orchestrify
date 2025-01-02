@@ -17,7 +17,6 @@ class ParseTimeoutError(Exception):
     """
     pass
 
-# Code for filtering MIDI files from a dataset based on their parsing time or other issues.
 def parse_with_timeout(file_path, timeout=5):
     """
     Parses a MIDI file within a specified timeout.
