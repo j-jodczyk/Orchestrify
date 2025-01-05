@@ -10,12 +10,9 @@ setup:
 	pip3 install -r website/requirements.txt
 	cd website/frontend && npm i
 
-[testenv:lint]
-deps =
-    black
-commands =
-    black --line-length 120 src
-    black --line-length 120 website
+setup-basic:
+	pip3 install -r requirements.txt
+	pip3 install -r src/requirements.txt
 
 clean:
 	rm -rf __pycache__
