@@ -1,5 +1,5 @@
 # local package
--e .
+# -e .
 
 tox==4.23.2
 black==24.8.0
