@@ -27,6 +27,7 @@ logger = logging.create_logger("music21jsb")
 
 class ParseTimeoutError(Exception):
     """Exception raised when MIDI parsing exceeds the allowed timeout."""
+
     pass
 
 

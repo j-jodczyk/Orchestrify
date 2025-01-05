@@ -51,8 +51,8 @@ class MMMTrainerBaseConfig:
         n_layer=6,
         n_embd=512,
         n_positions=1024,
-        n_ctx=1024
-        ):
+        n_ctx=1024,
+    ):
         """
         Initializes the MMMTrainerBaseConfig with the provided parameters.
 

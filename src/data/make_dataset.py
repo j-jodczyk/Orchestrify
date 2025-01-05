@@ -12,6 +12,7 @@ sys.path.insert(0, project_root)
 from src.AI_GURU.datasetcreator import DatasetCreator
 from src.AI_GURU.datasetcreatorconfig import JSBDatasetCreatorBarConfig
 
+
 def make_dataset(datasets_path: str, overwrite: bool = False):
     """
     Creates a dataset using the JSBDatasetCreatorBar configuration.

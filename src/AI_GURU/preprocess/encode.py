@@ -20,15 +20,7 @@ import random
 import json
 
 
-def encode_songs_data(
-    songs_data,
-    transpositions,
-    permute,
-    window_size_bars,
-    hop_length_bars,
-    density_bins,
-    bar_fill
-):
+def encode_songs_data(songs_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
     """
     Encodes a single song into tokens without additional dataset context.
 
@@ -152,15 +144,8 @@ def encode_event_data_no_transposition(event_data):
     """
     return encode_event_data(event_data, 0)
 
-def encode_song_data(
-    song_data,
-    transpositions,
-    permute,
-    window_size_bars,
-    hop_length_bars,
-    density_bins,
-    bar_fill
-):
+
+def encode_song_data(song_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
     """
     Encodes a single song into token sequences with dataset context.
 
