@@ -57,7 +57,7 @@ def verify_model(model_name):
         raise UnknownModelError(f"{model_name} is not an available model. Available: {models.keys()}")
 
 
-def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=False):
+def generate_midi_score(midi, density, tokenizer_repo, model_repo, max_length=5000, save_tokens=False):
     """
     Generates an enriched MIDI score using the specified model and tokenizer.
 
@@ -66,6 +66,7 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=F
         density (float): Density parameter for the model.
         tokenizer_repo (str): Hugging Face repository ID for the tokenizer.
         model_repo (str): Hugging Face repository ID for the model.
+        max_length (int): Maximum length of the generated sequence. Default is 5000
         save_tokens (boolean): If true, the tokens from original and generated midi get saved in data.json
 
     Returns:
@@ -82,7 +83,7 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=F
     model = GPT2LMHeadModel.from_pretrained(model_repo)
 
     input_ids = tokenizer.encode(" ".join(parsed_midi), return_tensors="pt")
-    generated_sequence = model.generate(input_ids, max_length=1000, do_sample=True)
+    generated_sequence = model.generate(input_ids, max_length, do_sample=True)
     decoded_sequence = tokenizer.decode(generated_sequence[0])
 
     generated_note_sequence = token_sequence_to_note_sequence(decoded_sequence, use_program=True, use_drums=True)
@@ -95,7 +96,6 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=F
     return generated_note_sequence
 
 
-# TODO: 1000 tokens limit?
 def main():
     parser = argparse.ArgumentParser(description="Generate a MIDI score using a specified model.")
     parser.add_argument("--midi_path", type=str, required=True, help="Path to the MIDI file.")

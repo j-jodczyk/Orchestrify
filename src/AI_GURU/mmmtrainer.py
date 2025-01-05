@@ -17,7 +17,6 @@
 import os
 import numpy as np
 import random
-import collections
 import torch
 from typing import Dict
 from torch.utils.data.dataset import Dataset
@@ -42,8 +41,6 @@ class MMMTrainer:
         # Make sure the output path exists.
         if not os.path.exists(output_path):
             os.makedirs(output_path)
-
-        # TODO Create dataset.
 
         if self.config.framework == "pytorch":
             return self.__train_pytorch(output_path=output_path, simulate=simulate)

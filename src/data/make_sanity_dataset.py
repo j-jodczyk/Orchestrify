@@ -1,6 +1,5 @@
 from music21 import note, chord, stream, instrument
 from pathlib import Path
-import os
 
 
 def create_midi_with_instruments(notes_and_durations, filepath, inst=None, is_drum=False):

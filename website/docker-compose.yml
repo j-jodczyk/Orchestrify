@@ -2,8 +2,8 @@ version: "3.8"
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: website/backend/Dockerfile
     ports:
       - "8000:8000"
     restart: always

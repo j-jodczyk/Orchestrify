@@ -3,9 +3,6 @@ import io
 from fastapi.testclient import TestClient
 from website.backend.main import app
 
-# from website.backend.handlers.get_models import handle_get_models
-# from website.backend.handlers.generate_midi import handle_generate_midi
-
 
 @pytest.fixture
 def client():
