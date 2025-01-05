@@ -29,6 +29,7 @@ nav:
     - API Reference: website/APIReference.md
   - Literature: LiteratureOverview.md
   - Project Reference:
+    - AI_GURU: AI_GURU.md
     - Data: Data.md
     - Models: Models.md
     - Website Backend: website/WebsiteBackend.md
