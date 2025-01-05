@@ -7,7 +7,6 @@ import { useDropzone } from "react-dropzone";
 import { toast, ToastContainer, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 const MAX_FILE_SIZE = 50 * 1024; // 5KB
 
 interface FormValues {
