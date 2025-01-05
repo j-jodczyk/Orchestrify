@@ -6,7 +6,6 @@ import os
 import argparse
 import json
 import sys
-import note_seq
 from src.models.errors import InvalidFileFormatError, UnknownModelError
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 from music21 import converter, tempo, stream
@@ -77,7 +76,7 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=F
         note_seq.NoteSequence: The generated note sequence.
     """
     score = converter.parse(midi)
-    song_data = preprocess_music21_song(score, train=False)
+    song_data = preprocess_music21_song(score)
     parsed_midi = encode_song_data_singular(song_data, density)
 
     tokenizer_path = hf_hub_download(
