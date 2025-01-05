@@ -124,11 +124,7 @@ class DatasetCreator:
         if not os.path.exists(midi_files_path):
             raise FileNotFoundError("Please create a 'midi_files' folder with all the MIDI files.")
 
-        return [
-            os.path.join(midi_files_path, f)
-            for f in os.listdir(midi_files_path)
-            if f.endswith(".mid")
-        ]
+        return [os.path.join(midi_files_path, f) for f in os.listdir(midi_files_path) if f.endswith(".mid")]
 
     def __process_with_music21(self, all_midi_files, dataset_path, overwrite):
         """
@@ -175,7 +171,10 @@ class DatasetCreator:
             )
 
             self.__append_encoded_data(
-                songs_data_train, train_file_path, density_bins, self.config.transpositions_train
+                songs_data_train,
+                train_file_path,
+                density_bins,
+                self.config.transpositions_train,
             )
             logger.info(f"Appended training data for batch {batch_index} to {train_file_path}.")
 
@@ -198,11 +197,19 @@ class DatasetCreator:
             dataset_path (str): Path to the dataset directory.
         """
         density_bins = get_density_bins(
-            songs_data_train, self.config.window_size_bars, self.config.hop_length_bars, self.config.density_bins_number
+            songs_data_train,
+            self.config.window_size_bars,
+            self.config.hop_length_bars,
+            self.config.density_bins_number,
         )
 
         train_file_path = os.path.join(dataset_path, "token_sequences_train.txt")
-        self.__save_encoded_data(songs_data_train, train_file_path, density_bins, self.config.transpositions_train)
+        self.__save_encoded_data(
+            songs_data_train,
+            train_file_path,
+            density_bins,
+            self.config.transpositions_train,
+        )
 
         valid_file_path = os.path.join(dataset_path, "token_sequences_valid.txt")
         self.__save_encoded_data(songs_data_valid, valid_file_path, density_bins, [0])

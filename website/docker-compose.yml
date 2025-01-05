@@ -8,8 +8,8 @@ services:
       - "8000:8000"
     restart: always
     volumes:
+      - ../src:/app/src
       - ./backend:/app
-      - ../src:/app/src  # Mount the src directory
     environment:
       - PYTHONUNBUFFERED=1
     command: >

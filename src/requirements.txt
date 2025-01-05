@@ -1,0 +1,11 @@
+beautifulsoup4==4.8.2
+huggingface_hub==0.26.2
+kagglehub==0.3.6
+music21==9.3.0
+note_seq==0.0.5
+numpy==1.24.4
+Requests==2.32.3
+tokenizers==0.20.0
+torch==2.4.1
+tqdm==4.66.6
+transformers==4.46.3

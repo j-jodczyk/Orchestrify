@@ -16,6 +16,7 @@
 
 import os
 
+
 class MMMTrainerBaseConfig:
     """
     Base configuration class for the MMMTrainer.
@@ -83,7 +84,9 @@ class MMMTrainerBaseConfig:
 
         # Check if any dataset files are missing.
         missing_dataset_files = []
-        missing_dataset_files = [file for file in dataset_train_files + dataset_validate_files if not os.path.exists(file)]
+        missing_dataset_files = [
+            file for file in dataset_train_files + dataset_validate_files if not os.path.exists(file)
+        ]
         if len(missing_dataset_files) != 0:
             error_string = f"Missing dataset files {missing_dataset_files}."
             raise Exception(error_string)

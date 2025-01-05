@@ -1,1 +1,1 @@
-The files in this folder come from MMM implementation by AI-Guru  https://github.com/AI-Guru/MMM-JSB/tree/main
+The files in this folder originally come from MMM implementation by AI-Guru https://github.com/AI-Guru/MMM-JSB/tree/main but have been slightly modified to better suit the needs of our project.

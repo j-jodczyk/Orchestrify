@@ -48,7 +48,7 @@ class TokenSequenceDataset(Dataset):
         encoded_lengths = []
         for line in lines:
 
-            #Skip empty lines.
+            # Skip empty lines.
             line = line.strip()
             if line == "":
                 continue
@@ -65,26 +65,28 @@ class TokenSequenceDataset(Dataset):
                 token = line.split()[index]
                 if token not in unknown_tokens_set:
                     unknown_tokens_set += [token]
-                #logger.warning(f"Skipping line because of unknown token {token}")
+                # logger.warning(f"Skipping line because of unknown token {token}")
                 unknown_tokens += [token]
                 unknown_token_lines_count += 1
                 continue
 
             # Skip sequence if it is too long.
             if len(encoded_line) > block_size:
-                #logger.warning(f"Skipping line because it is too long... {len(encoded_line)} > {block_size}")
+                # logger.warning(f"Skipping line because it is too long... {len(encoded_line)} > {block_size}")
                 too_long_lines_count += 1
                 continue
 
             # Pad and truncate.
             tensor = np.full((block_size,), pad_token_id, dtype=np.longlong)
-            tensor[:len(encoded_line)] = encoded_line
+            tensor[: len(encoded_line)] = encoded_line
             assert len(tensor) == block_size
 
-            self.examples += [{
-                "input_ids": torch.tensor(tensor, dtype=torch.long),
-                "labels": torch.tensor(tensor, dtype=torch.long)
-            }]
+            self.examples += [
+                {
+                    "input_ids": torch.tensor(tensor, dtype=torch.long),
+                    "labels": torch.tensor(tensor, dtype=torch.long),
+                }
+            ]
 
     def __len__(self):
         """
@@ -106,4 +108,3 @@ class TokenSequenceDataset(Dataset):
             dict: A dictionary containing `input_ids` and `labels` tensors.
         """
         return self.examples[i]
-

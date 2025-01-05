@@ -1,17 +1,13 @@
 # local package
--e .
+# -e .
 
-# external requirements
-click
-Sphinx
-coverage
-flake8
-transformers
-torchaccelerate==1.0.1
-note_seq
-kagglehub
-music21
-note_seq
-black
-requests
-beautifulsoup4
+tox==4.23.2
+black==24.8.0
+mkdocs==1.6.1
+mkdocs-autorefs==1.2.0
+mkdocs-get-deps==0.2.0
+mkdocstrings==0.26.1
+mkdocstrings-python==1.11.1
+neoteroi-mkdocs==1.1.0
+pytest==8.3.4
+pytest-asyncio==0.24.0

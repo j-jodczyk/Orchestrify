@@ -1,6 +1,5 @@
 from music21 import note, chord, stream, instrument
 from pathlib import Path
-import os
 
 
 def create_midi_with_instruments(notes_and_durations, filepath, inst=None, is_drum=False):
@@ -54,7 +53,12 @@ def main():
         ),
         ([(["C4", "E4", "G4"], 2)], "c_major_triad.mid", instrument.AcousticGuitar()),
         (
-            [(["C4", "E4", "G4"], 2), (["F4", "A4", "C5"], 2), (["G4", "B4", "D5"], 2), (["C4", "E4", "G4"], 2)],
+            [
+                (["C4", "E4", "G4"], 2),
+                (["F4", "A4", "C5"], 2),
+                (["G4", "B4", "D5"], 2),
+                (["C4", "E4", "G4"], 2),
+            ],
             "chord_progression.mid",
             instrument.AcousticGuitar(),
         ),
@@ -86,11 +90,23 @@ def main():
         ),
         ([(["C4", "Eb4", "G4"], 2)], "c_minor_triad.mid", instrument.Piano()),
         (
-            [("C4", 0.5), ("E4", 0.5), ("G4", 0.5), ("C5", 0.5), ("G4", 0.5), ("E4", 0.5), ("C4", 0.5)],
+            [
+                ("C4", 0.5),
+                ("E4", 0.5),
+                ("G4", 0.5),
+                ("C5", 0.5),
+                ("G4", 0.5),
+                ("E4", 0.5),
+                ("C4", 0.5),
+            ],
             "arpeggio.mid",
             instrument.Violin(),
         ),
-        ([(pitch, 1) for pitch in ["C4", "D4", "E4", "G4", "A4", "C5"]], "pentatonic_scale.mid", instrument.Piano()),
+        (
+            [(pitch, 1) for pitch in ["C4", "D4", "E4", "G4", "A4", "C5"]],
+            "pentatonic_scale.mid",
+            instrument.Piano(),
+        ),
         (
             [
                 (["C4", "E4", "G4"], 1),  # Chord
@@ -107,7 +123,16 @@ def main():
             instrument.Piano(),
         ),
         (
-            [("C4", 0.75), (None, 0.25), ("E4", 0.5), ("G4", 1), ("C5", 0.75), (None, 0.25), ("G4", 0.5), ("E4", 1)],
+            [
+                ("C4", 0.75),
+                (None, 0.25),
+                ("E4", 0.5),
+                ("G4", 1),
+                ("C5", 0.75),
+                (None, 0.25),
+                ("G4", 0.5),
+                ("E4", 1),
+            ],
             "syncopated_rhythm.mid",
             instrument.Piano(),
         ),
@@ -119,18 +144,41 @@ def main():
 
     test_midi_drums = [
         (
-            [(36, 1), (42, 1), (38, 1), (42, 1), (36, 1), (42, 1), (38, 1), (42, 1)],  # Kick, Hi-Hat, Snare, Hi-Hat
+            [
+                (36, 1),
+                (42, 1),
+                (38, 1),
+                (42, 1),
+                (36, 1),
+                (42, 1),
+                (38, 1),
+                (42, 1),
+            ],  # Kick, Hi-Hat, Snare, Hi-Hat
             "basic_rock_beat.mid",
             None,
             True,
         ),
         (
-            [(36, 1), (42, 0.5), (46, 0.5), (38, 0.75), (42, 0.25), (36, 0.5), (42, 0.5), (38, 1)],
+            [
+                (36, 1),
+                (42, 0.5),
+                (46, 0.5),
+                (38, 0.75),
+                (42, 0.25),
+                (36, 0.5),
+                (42, 0.5),
+                (38, 1),
+            ],
             "funky_beat.mid",
             None,
             True,
         ),
-        ([(38, 0.125) for _ in range(32)], "drum_roll.mid", None, True),  # 32 notes for a drum roll
+        (
+            [(38, 0.125) for _ in range(32)],
+            "drum_roll.mid",
+            None,
+            True,
+        ),  # 32 notes for a drum roll
         (
             [
                 (42, 0.25),

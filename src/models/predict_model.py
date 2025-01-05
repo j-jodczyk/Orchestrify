@@ -4,10 +4,20 @@ Contains script to generate a MIDI file from a model.
 
 import note_seq
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
-from src.AI_GURU.token_sequence_helpers import get_priming_token_sequence, token_sequence_to_note_sequence
+from src.AI_GURU.token_sequence_helpers import (
+    get_priming_token_sequence,
+    token_sequence_to_note_sequence,
+)
 
 
-def generate_midi(model, tokenizer, validation_data_path, output_file, max_length=1000, temperature=0.9):
+def generate_midi(
+    model,
+    tokenizer,
+    validation_data_path,
+    output_file,
+    max_length=1000,
+    temperature=0.9,
+):
     """
     Generates a MIDI file from a given model and tokenizer using a priming sequence.
 
@@ -23,7 +33,7 @@ def generate_midi(model, tokenizer, validation_data_path, output_file, max_lengt
         validation_data_path,
         stop_on_track_end=0,
         stop_after_n_tokens=20,
-        return_original=True
+        return_original=True,
     )
 
     input_ids = tokenizer.encode(priming_sample, return_tensors="pt")
@@ -43,8 +53,8 @@ def generate_midi(model, tokenizer, validation_data_path, output_file, max_lengt
 
 if __name__ == "__main__":
     model_path = "Milos121/MMM_jsb_mmmbar"
-    tokenizer_path = '../data/external/Jazz Midi/jsb_mmmtrack/tokenizer.json'
-    validation_data_path = '../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_valid.txt'
+    tokenizer_path = "../data/external/Jazz Midi/jsb_mmmtrack/tokenizer.json"
+    validation_data_path = "../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_valid.txt"
     output_file = "generated_music.mid"
 
     model = GPT2LMHeadModel.from_pretrained(model_path)
@@ -56,5 +66,5 @@ if __name__ == "__main__":
         validation_data_path=validation_data_path,
         output_file=output_file,
         max_length=1000,
-        temperature=0.9
+        temperature=0.9,
     )

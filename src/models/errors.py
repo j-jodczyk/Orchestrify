@@ -7,8 +7,10 @@ class InvalidFileFormatError(ValueError):
     Attributes:
         message (str): Explanation of the error. Defaults to "The file format is invalid."
     """
+
     def __init__(self, message="The file format is invalid."):
         super().__init__(message)
+
 
 class UnknownModelError(ValueError):
     """
@@ -19,5 +21,6 @@ class UnknownModelError(ValueError):
     Attributes:
         message (str): Explanation of the error. Defaults to "Attempt to use unknown model."
     """
+
     def __init__(self, message="Attempt to use unknown model."):
         super().__init__(message)
