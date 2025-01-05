@@ -31,14 +31,33 @@ from .mmmtrainerconfig import MMMTrainerBaseConfig
 
 
 class MMMTrainer:
+    """
+    Trainer class for training GPT-2 language models with a custom dataset.
+
+    Attributes:
+        config (MMMTrainerBaseConfig): Configuration object specifying model and training parameters.
+    """
 
     def __init__(self, config: MMMTrainerBaseConfig):
+        """
+        Initializes the MMMTrainer with the provided configuration.
+
+        Args:
+            config (MMMTrainerBaseConfig): Configuration for the training process.
+        """
 
         if not isinstance(config, MMMTrainerBaseConfig) and not config.__class__.__base__ == MMMTrainerBaseConfig:
             raise Exception("Config must inherit from MMMTrainerBaseConfig")
         self.config = config
 
     def train(self, output_path, simulate=False):
+        """
+        Trains the GPT-2 model using the specified configuration.
+
+        Args:
+            output_path (str): Directory where the trained model will be saved.
+            simulate (bool): If True, simulates training with a small dataset.
+        """
         # Make sure the output path exists.
         if not os.path.exists(output_path):
             os.makedirs(output_path)
@@ -51,6 +70,13 @@ class MMMTrainer:
             assert False, "Implement!"
 
     def __train_pytorch(self, output_path, simulate):
+        """
+        Implements the training process using PyTorch.
+
+        Args:
+            output_path (str): Directory where the model and logs will be saved.
+            simulate (bool): If True, simulates training with a small dataset.
+        """
         # Create tokenizer.
         if not os.path.exists(self.config.tokenizer_path):
             raise Exception(f"No tokenizer found at {self.config.tokenizer_path}")
@@ -129,8 +155,24 @@ class MMMTrainer:
 
 
 class TokenSequenceDataset(Dataset):
+    """
+    Custom dataset class for tokenized sequences used in training.
+
+    Attributes:
+        tokenizer (PreTrainedTokenizerFast): Tokenizer used for encoding.
+        examples (list): List of encoded sequences with padding and truncation applied.
+    """
 
     def __init__(self, tokenizer, dataset_paths, block_size, simulate=False):
+        """
+        Initializes the TokenSequenceDataset.
+
+        Args:
+            tokenizer (PreTrainedTokenizerFast): Tokenizer for encoding sequences.
+            dataset_paths (list): List of paths to input dataset files.
+            block_size (int): Maximum sequence length after padding.
+            simulate (bool): If True, uses a smaller dataset for simulation.
+        """
 
         pad_token_id = tokenizer.encode("[PAD]")[0]
         unk_token_id = tokenizer.encode("[UNK]")[0]
@@ -195,7 +237,19 @@ class TokenSequenceDataset(Dataset):
             }]
 
     def __len__(self):
+        """
+        Returns the number of examples in the dataset.
+        """
         return len(self.examples)
 
     def __getitem__(self, i) -> Dict[str, torch.tensor]:
+        """
+        Retrieves the i-th example from the dataset.
+
+        Args:
+            i (int): Index of the example to retrieve.
+
+        Returns:
+            Dict[str, torch.tensor]: Encoded sequence and labels.
+        """
         return self.examples[i]

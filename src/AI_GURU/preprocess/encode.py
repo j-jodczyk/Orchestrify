@@ -21,6 +21,21 @@ import json
 
 
 def encode_songs_data(songs_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
+    """
+    Encodes a single song into tokens without additional dataset context.
+
+    Args:
+        songs_data (list): List of dictionaries, each representing a single song.
+        transpositions (list): List of transposition values.
+        permute (bool): Whether to permute tracks randomly.
+        window_size_bars (int): Number of bars in a window.
+        hop_length_bars (int): Hop length between consecutive windows.
+        density_bins (list): Density bins for note events.
+        bar_fill (bool): Whether to include bar fills.
+
+    Returns:
+        list: List of token sequences representing all songs.
+    """
 
     # This will be returned.
     token_sequences = []
@@ -37,6 +52,13 @@ def encode_song_data_singular(song_data, density):
     Used to encode song data on per one midi file basis - as opposed to
     encode_song_data, which is used to encode a song that is a part of
     a greater dataset.
+
+    Args:
+        song_data (dict): Dictionary representing a single song.
+        density (int): Density bin for the song.
+
+    Returns:
+        list: Token sequence for the song.
 
     NOTE: Doesn't give the option of bar fill, since our project is not focused on that
     """
@@ -57,6 +79,13 @@ def encode_track_data_singular(track_data, density):
     Used to encode trak data on per one midi file basis - as opposed to
     encode_trak_data, which is used to encode tracks from a song that is a part of
     a greater dataset.
+
+    Args:
+        track_data (dict): Dictionary representing track data.
+        density (int): Density bin for the track.
+
+    Returns:
+        list: Token sequence for the track.
     """
     tokens = ["TRACK_START"]
     number = track_data["number"]
@@ -77,6 +106,12 @@ def encode_bar_data_no_transposition(bar_data):
     """
     Encodes bar data without transposition (because I don't understand it)
 
+    Args:
+        bar_data (dict): Dictionary representing bar data.
+
+    Returns:
+        list: Token sequence for the bar.
+
     NOTE: Doesn't give the option of bar fill, since our project is not focued on that
     """
     tokens = ["BAR_START"]
@@ -88,10 +123,31 @@ def encode_bar_data_no_transposition(bar_data):
 def encode_event_data_no_transposition(event_data):
     """
     Encodes event data without transposition
+
+    Args:
+        event_data (dict): Dictionary representing event data.
+
+    Returns:
+        str: Encoded event as a string.
     """
     return encode_event_data(event_data, 0)
 
 def encode_song_data(song_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
+    """
+    Encodes a single song into token sequences with dataset context.
+
+    Args:
+        song_data (dict): Dictionary representing a single song.
+        transpositions (list): List of transposition values.
+        permute (bool): Whether to permute tracks randomly.
+        window_size_bars (int): Number of bars in a window.
+        hop_length_bars (int): Hop length between consecutive windows.
+        density_bins (list): Density bins for note events.
+        bar_fill (bool): Whether to include bar fills.
+
+    Returns:
+        list: List of token sequences for the song.
+    """
 
     # This will be returned.
     token_sequences = []
@@ -144,6 +200,19 @@ def encode_song_data(song_data, transpositions, permute, window_size_bars, hop_l
 
 
 def encode_track_data(track_data, density_bins, bar_start_index, bar_end_index, transposition):
+    """
+    Encodes track data for a single track within dataset context.
+
+    Args:
+        track_data (dict): Dictionary representing track data.
+        density_bins (list): Density bins for note events.
+        bar_start_index (int): Starting bar index.
+        bar_end_index (int): Ending bar index.
+        transposition (int): Transposition value.
+
+    Returns:
+        list: Token sequence for the track.
+    """
 
     tokens = []
 
@@ -205,6 +274,18 @@ def encode_event_data(event_data, transposition):
 
 
 def get_density_bins(songs_data, window_size_bars, hop_length_bars, bins):
+    """
+    Computes density bins based on note-on event counts.
+
+    Args:
+        songs_data (list): List of dictionaries, each representing a song.
+        window_size_bars (int): Number of bars in a window.
+        hop_length_bars (int): Hop length between consecutive windows.
+        bins (int): Number of density bins.
+
+    Returns:
+        list: List of density bin thresholds.
+    """
 
     # Go through all songs and count the note on events for each window.\
     distribution = []
@@ -225,7 +306,7 @@ def get_density_bins(songs_data, window_size_bars, hop_length_bars, bins):
                 # Do not count empty tracks.
                 if count != 0:
                     distribution += [count]
-                    
+
     if len(distribution) == 0:
         raise ValueError("Density distribution is empty. Ensure training data contains valid songs.")
 
@@ -238,6 +319,18 @@ def get_density_bins(songs_data, window_size_bars, hop_length_bars, bins):
 
 
 def get_density_bins_from_json_files(json_paths, window_size_bars, hop_length_bars, bins):
+    """
+    Computes density bins based on note-on event counts from JSON files.
+
+    Args:
+        json_paths (list): List of paths to JSON files.
+        window_size_bars (int): Number of bars in a window.
+        hop_length_bars (int): Hop length between consecutive windows.
+        bins (int): Number of density bins.
+
+    Returns:
+        list: List of density bin thresholds.
+    """
 
     # Go through all songs and count the note on events for each window.\
     distribution = []
@@ -272,10 +365,30 @@ def get_density_bins_from_json_files(json_paths, window_size_bars, hop_length_ba
 
 
 def get_bars_number(song_data):
+    """
+    Computes the maximum number of bars across all tracks in a song.
+
+    Args:
+        song_data (dict): Dictionary representing a song.
+
+    Returns:
+        int: Maximum number of bars.
+    """
     bars = [len(track_data["bars"]) for track_data in song_data["tracks"]]
     bars = max(bars)
     return bars
 
 
 def get_bar_indices(bars, window_size_bars, hop_length_bars):
+    """
+    Computes the start and end indices for sliding windows over bars.
+
+    Args:
+        bars (int): Total number of bars.
+        window_size_bars (int): Number of bars in a window.
+        hop_length_bars (int): Hop length between consecutive windows.
+
+    Returns:
+        list: List of tuples (start_index, end_index).
+    """
     return list(zip(range(0, bars, hop_length_bars), range(window_size_bars, bars, hop_length_bars)))

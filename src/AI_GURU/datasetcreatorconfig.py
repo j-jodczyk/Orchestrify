@@ -21,6 +21,19 @@ logger = create_logger("datasetcreatorconfig")
 
 
 class DatasetCreatorBaseConfig:
+    """
+    Base class for dataset creator configuration.
+
+    Attributes:
+        dataset_name (str): Name of the dataset.
+        encoding_method (str/callable): Method or string specifying the encoding type.
+        json_data_method (str/callable): Method or string for JSON data processing.
+        window_size_bars (int): Window size in bars for encoding.
+        hop_length_bars (int): Hop length in bars for sliding windows.
+        density_bins_number (int): Number of bins for density calculation.
+        transpositions_train (list): List of integers representing transpositions.
+        permute_tracks (bool): Whether to permute tracks during preprocessing.
+    """
 
     def __init__(
         self,
@@ -33,6 +46,19 @@ class DatasetCreatorBaseConfig:
         transpositions_train,
         permute_tracks,
     ):
+        """
+        Initializes the DatasetCreatorBaseConfig and validates its parameters.
+
+        Args:
+            dataset_name (str): Name of the dataset.
+            encoding_method (str/callable): Encoding method or string identifier.
+            json_data_method (str/callable): JSON data processing method or string.
+            window_size_bars (int): Sliding window size in bars.
+            hop_length_bars (int): Hop length in bars.
+            density_bins_number (int): Number of density bins.
+            transpositions_train (list): List of integers for training transpositions.
+            permute_tracks (bool): Whether to permute tracks in preprocessing.
+        """
 
         # Check if the datasetname is fine.
         if not isinstance(dataset_name, str):
@@ -93,8 +119,20 @@ class DatasetCreatorBaseConfig:
 
 
 class JSBDatasetCreatorTrackConfig(DatasetCreatorBaseConfig):
+    """
+    Configuration for creating track-level datasets from the JSB dataset.
+
+    Inherits from `DatasetCreatorBaseConfig` and sets default parameters specific
+    to track-level encoding.
+    """
 
     def __init__(self, **kwargs):
+        """
+        Initializes the track-level dataset configuration with default values.
+
+        Args:
+            **kwargs: Additional arguments to override default parameters.
+        """
         super().__init__(
             dataset_name="jsb_mmmtrack",
             encoding_method="mmmtrack",
@@ -109,8 +147,20 @@ class JSBDatasetCreatorTrackConfig(DatasetCreatorBaseConfig):
 
 
 class JSBDatasetCreatorBarConfig(DatasetCreatorBaseConfig):
+    """
+    Configuration for creating bar-level datasets from the JSB dataset.
+
+    Inherits from `DatasetCreatorBaseConfig` and sets default parameters specific
+    to bar-level encoding.
+    """
 
     def __init__(self, **kwargs):
+        """
+        Initializes the bar-level dataset configuration with default values.
+
+        Args:
+            **kwargs: Additional arguments to override default parameters.
+        """
         super().__init__(
             dataset_name="jsb_mmmbar",
             encoding_method="mmmbar",

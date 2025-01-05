@@ -26,10 +26,23 @@ logger = logging.create_logger("music21jsb")
 
 
 class ParseTimeoutError(Exception):
+    """Exception raised when MIDI parsing exceeds the allowed timeout."""
     pass
 
 
 def parse_with_timeout(file_path):
+    """
+    Parses a MIDI file with a timeout to prevent hanging.
+
+    Args:
+        file_path (str): Path to the MIDI file.
+
+    Returns:
+        music21.stream.Score: Parsed music21 score.
+
+    Raises:
+        Exception: If parsing fails.
+    """
     result = [None]
     exception = [None]
 
@@ -50,11 +63,26 @@ def parse_with_timeout(file_path):
 
 
 def is_valid_midi(file_path):
+    """
+    Validates a MIDI file by checking its type and attempting to read it.
+
+    Args:
+        file_path (str): Path to the MIDI file.
+
+    Returns:
+        bool: True if the file is a valid MIDI file of type 0 or 1, False otherwise.
+    """
     try:
         mf = MidiFile()
         mf.open(file_path)
         mf.read()
         mf.close()
+
+        midi_type = mf.format
+        if midi_type == 2:
+            logger.warning(f"Unsupported MIDI file type: {file_path} is type 2.")
+            return False
+
         return True
     except Exception as e:
         logger.warning(f"Invalid MIDI file: {file_path}. Reason: {e}")
@@ -62,6 +90,15 @@ def is_valid_midi(file_path):
 
 
 def preprocess_music21(midi_files):
+    """
+    Preprocesses a list of MIDI files into training and validation datasets.
+
+    Args:
+        midi_files (list): List of file paths to MIDI files.
+
+    Returns:
+        tuple: (training data, validation data, flag indicating if no valid files were found).
+    """
     valid_midi_files = [file for file in midi_files if is_valid_midi(file)]
 
     if not valid_midi_files:
@@ -85,6 +122,15 @@ def preprocess_music21(midi_files):
 
 
 def parse_midi_file(midi_file):
+    """
+    Parses a MIDI file into a music21 stream.Score.
+
+    Args:
+        midi_file (str): Path to the MIDI file.
+
+    Returns:
+        music21.stream.Score: Parsed music21 score, or None if parsing fails.
+    """
     try:
         return parse_with_timeout(midi_file)
     except ParseTimeoutError as e:
@@ -95,6 +141,15 @@ def parse_midi_file(midi_file):
 
 
 def preprocess_music21_songs(songs):
+    """
+    Preprocesses a list of music21 scores into tokenized data.
+
+    Args:
+        songs (list): List of music21.stream.Score objects.
+
+    Returns:
+        list: List of tokenized song data.
+    """
     songs_data = []
     for song in songs:
         song_data = preprocess_music21_song(song)
@@ -105,6 +160,15 @@ def preprocess_music21_songs(songs):
 
 
 def preprocess_music21_song(song):
+    """
+    Preprocesses a single music21 score into tokenized data.
+
+    Args:
+        song (music21.stream.Score): A music21 score object.
+
+    Returns:
+        dict: Tokenized song data, or None if the song is invalid.
+    """
     meters = [meter.ratioString for meter in song.recurse().getElementsByClass(music21.meter.TimeSignature)]
     meters = list(set(meters))
     if len(meters) != 1:
@@ -124,6 +188,16 @@ def preprocess_music21_song(song):
 
 
 def preprocess_music21_part(part, part_index):
+    """
+    Preprocesses a music21 part into tokenized track data.
+
+    Args:
+        part (music21.stream.Part): A music21 part object.
+        part_index (int): Index of the part in the song.
+
+    Returns:
+        dict: Tokenized track data.
+    """
     track_data = {"name": part.partName, "number": part_index, "bars": []}
 
     for measure_index in range(1, 1000):  # music21 uses 1-based indexing for measures
@@ -143,6 +217,15 @@ def preprocess_music21_part(part, part_index):
 
 
 def preprocess_music21_measure(measure):
+    """
+    Preprocesses a music21 measure into tokenized bar data.
+
+    Args:
+        measure (music21.stream.Measure): A music21 measure object.
+
+    Returns:
+        dict: Tokenized bar data.
+    """
     events = []
     for note in measure.recurse(classFilter=("Note")):
         events.append(("NOTE_ON", note.pitch.midi, 4 * note.offset))

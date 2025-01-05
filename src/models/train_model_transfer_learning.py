@@ -3,6 +3,12 @@ Contains script for transfer learning the model.
 """
 
 import os
+import sys
+
+# Sometimes, it may be necessary to add the project root to ensure the imports work correctly
+# project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+# sys.path.insert(0, project_root)
+
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel, DataCollatorWithPadding, Trainer, TrainingArguments
 from src.AI_GURU.token_sequence_dataset import TokenSequenceDataset
 
@@ -119,11 +125,11 @@ def transfer_learn_model(
 
 
 if __name__ == "__main__":
-    model_path = "Milos121/MMM_jsb_mmmbar"
-    tokenizer_path = '../../data/external/Jazz Midi/jsb_mmmtrack/tokenizer.json'
-    train_dataset_path = '../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_train.txt'
-    valid_dataset_path = '../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_valid.txt'
-    output_path = "../models"
+    model_path = "../models"
+    tokenizer_path = '../data_game_theme/jsb_mmmbar/tokenizer.json'
+    train_dataset_path = '../data_game_theme/jsb_mmmbar/token_sequences_train.txt'
+    valid_dataset_path = '../data_game_theme/jsb_mmmbar/token_sequences_valid.txt'
+    output_path = "../transfer"
 
     transfer_learn_model(
         model_path=model_path,

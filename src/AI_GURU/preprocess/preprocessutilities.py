@@ -16,6 +16,23 @@
 
 
 def events_to_events_data(events):
+    """
+    This function takes a list of musical events, sorts them chronologically, and generates a structured
+    representation in the form of dictionaries. Additionally, it ensures that timing information is preserved
+    through the introduction of "TIME_DELTA" events, which represent the time elapsed between successive events.
+
+    Args:
+        events (list): A list of tuples representing musical events. Each tuple contains:
+            - type (str): The type of event, e.g., "NOTE_ON", "NOTE_OFF".
+            - pitch (int): The MIDI pitch value associated with the event.
+            - time (float): The time at which the event occurs.
+
+    Returns:
+        list: A list of dictionaries, each representing an event. Each dictionary contains:
+            - "type" (str): The type of event.
+            - "pitch" (int, optional): The pitch value (for note events).
+            - "delta" (float, optional): The time difference between events.
+    """
 
     events = sorted(events, key=lambda event: event[2])
 

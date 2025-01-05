@@ -27,11 +27,29 @@ logger = logging.create_logger("datasetcreator")
 
 
 class DatasetCreator:
+    """
+    A class responsible for creating datasets for MMM model.
+
+    Attributes:
+        config: Configuration object specifying dataset creation parameters.
+    """
 
     def __init__(self, config):
+        """
+        Initializes the DatasetCreator with a given configuration.
+
+        Args:
+            config: Configuration object with parameters for dataset creation.
+        """
         self.config = config
 
     def create(self, datasets_path, overwrite=False):
+        """
+        Initializes the DatasetCreator with a given configuration.
+
+        Args:
+            config: Configuration object with parameters for dataset creation.
+        """
         # Ensure dataset paths exist
         dataset_path = self.__prepare_paths(datasets_path, overwrite)
 
@@ -52,6 +70,16 @@ class DatasetCreator:
             self.__process_and_save_data(songs_data_train, songs_data_valid, dataset_path)
 
     def __prepare_paths(self, datasets_path, overwrite):
+        """
+        Prepares the necessary directories for dataset creation.
+
+        Args:
+            datasets_path (str): Path to the datasets folder.
+            overwrite (bool): Whether to overwrite existing datasets.
+
+        Returns:
+            str: Path to the dataset directory or None if dataset already exists.
+        """
         if not os.path.exists(datasets_path):
             raise Exception("Dataset path doesn't exist")
 
@@ -65,6 +93,13 @@ class DatasetCreator:
         return dataset_path
 
     def __resolve_json_data_method(self):
+        """
+        Determines the method to process JSON data based on the configuration.
+
+        Returns:
+            tuple: A method for generating JSON data and a boolean indicating
+            whether to use music21 preprocessing.
+        """
         if self.config.json_data_method == "preprocess_music21":
             return None, True
         elif callable(self.config.json_data_method):
@@ -75,6 +110,15 @@ class DatasetCreator:
             raise Exception(error_string)
 
     def __get_all_midi_files(self, datasets_path):
+        """
+        Retrieves all MIDI files from the specified path.
+
+        Args:
+            datasets_path (str): Path to the datasets folder.
+
+        Returns:
+            list: A list of paths to MIDI files.
+        """
         midi_files_path = os.path.join(datasets_path, "midi_files")
 
         if not os.path.exists(midi_files_path):
@@ -87,6 +131,14 @@ class DatasetCreator:
         ]
 
     def __process_with_music21(self, all_midi_files, dataset_path, overwrite):
+        """
+        Processes MIDI files using the music21 library and saves the results.
+
+        Args:
+            all_midi_files (list): List of paths to MIDI files.
+            dataset_path (str): Path to the dataset directory.
+            overwrite (bool): Whether to overwrite existing files.
+        """
         batch_size = 100
         total_batches = (len(all_midi_files) + batch_size - 1) // batch_size
         print(dataset_path)
@@ -137,6 +189,14 @@ class DatasetCreator:
         tokenizer = self.__create_and_save_tokenizer([train_file_path], dataset_path)
 
     def __process_and_save_data(self, songs_data_train, songs_data_valid, dataset_path):
+        """
+        Processes and saves training and validation data.
+
+        Args:
+            songs_data_train: Training data.
+            songs_data_valid: Validation data.
+            dataset_path (str): Path to the dataset directory.
+        """
         density_bins = get_density_bins(
             songs_data_train, self.config.window_size_bars, self.config.hop_length_bars, self.config.density_bins_number
         )
@@ -150,6 +210,15 @@ class DatasetCreator:
         self.__create_and_save_tokenizer([train_file_path, valid_file_path], dataset_path)
 
     def __save_encoded_data(self, songs_data, path, density_bins, transpositions):
+        """
+        Encodes and saves song data to a file.
+
+        Args:
+            songs_data: Data to encode.
+            path (str): File path to save data.
+            density_bins: Density bins for encoding.
+            transpositions (list): List of transpositions for augmentation.
+        """
         token_sequences = encode_songs_data(
             songs_data,
             transpositions=transpositions,
@@ -162,6 +231,15 @@ class DatasetCreator:
         self.__save_token_sequences(token_sequences, path)
 
     def __append_encoded_data(self, songs_data, path, density_bins, transpositions):
+        """
+        Encodes and appends song data to a file.
+
+        Args:
+            songs_data: Data to encode.
+            path (str): File path to append data.
+            density_bins: Density bins for encoding.
+            transpositions (list): List of transpositions for augmentation.
+        """
         token_sequences = encode_songs_data(
             songs_data,
             transpositions=transpositions,
@@ -174,21 +252,51 @@ class DatasetCreator:
         self.__append_token_sequences(token_sequences, path)
 
     def __save_token_sequences(self, token_sequences, path):
+        """
+        Saves token sequences to a file.
+
+        Args:
+            token_sequences: List of token sequences.
+            path (str): File path to save the sequences.
+        """
         with open(path, "w") as file:
             for token_sequence in token_sequences:
                 print(" ".join(token_sequence), file=file)
 
     def __append_token_sequences(self, token_sequences, path):
+        """
+        Appends token sequences to a file.
+
+        Args:
+            token_sequences: List of token sequences.
+            path (str): File path to append the sequences.
+        """
         with open(path, "a") as file:
             for token_sequence in token_sequences:
                 file.write(" ".join(token_sequence) + "\n")
 
     def __create_and_save_tokenizer(self, files, dataset_path):
+        """
+        Creates and saves a tokenizer for the dataset.
+
+        Args:
+            files (list): List of files to use for training the tokenizer.
+            dataset_path (str): Path to save the tokenizer.
+        """
         tokenizer = self.__create_tokenizer(files)
         tokenizer_path = os.path.join(dataset_path, "tokenizer.json")
         tokenizer.save(tokenizer_path)
 
     def __create_tokenizer(self, files):
+        """
+        Creates a tokenizer from the given files.
+
+        Args:
+            files (list): List of files to train the tokenizer.
+
+        Returns:
+            Tokenizer: A trained tokenizer object.
+        """
         logger.info("Preparing tokenizer...")
         tokenizer = Tokenizer(WordLevel(unk_token="[UNK]"))
         tokenizer.pre_tokenizer = WhitespaceSplit()

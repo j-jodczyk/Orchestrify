@@ -6,8 +6,23 @@ from torch.utils.data.dataset import Dataset
 
 
 class TokenSequenceDataset(Dataset):
+    """
+    A custom PyTorch Dataset for processing tokenized sequences.
+
+    Attributes:
+        examples (list): A list of processed examples, each containing `input_ids` and `labels`.
+    """
 
     def __init__(self, tokenizer, dataset_paths, block_size, simulate=False):
+        """
+        Initializes the TokenSequenceDataset.
+
+        Args:
+            tokenizer: A tokenizer object for encoding text lines.
+            dataset_paths (list): List of file paths to load the dataset from.
+            block_size (int): Maximum sequence length after padding and truncation.
+            simulate (bool): If True, limits the dataset to a small subset for debugging.
+        """
 
         pad_token_id = tokenizer.encode("[PAD]")[0]
         unk_token_id = tokenizer.encode("[UNK]")[0]
@@ -72,8 +87,23 @@ class TokenSequenceDataset(Dataset):
             }]
 
     def __len__(self):
+        """
+        Returns the total number of examples in the dataset.
+
+        Returns:
+            int: Number of examples.
+        """
         return len(self.examples)
 
     def __getitem__(self, i):
+        """
+        Retrieves the i-th example from the dataset.
+
+        Args:
+            i (int): Index of the example to retrieve.
+
+        Returns:
+            dict: A dictionary containing `input_ids` and `labels` tensors.
+        """
         return self.examples[i]
 

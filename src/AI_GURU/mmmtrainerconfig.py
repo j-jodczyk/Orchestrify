@@ -17,6 +17,24 @@
 import os
 
 class MMMTrainerBaseConfig:
+    """
+    Base configuration class for the MMMTrainer.
+
+    Attributes:
+        framework (str): Framework to use for training (default: "pytorch").
+        tokenizer_path (str): Path to the tokenizer file.
+        dataset_train_files (list): List of paths to training dataset files.
+        dataset_validate_files (list): List of paths to validation dataset files.
+        pad_length (int): Maximum padding length for input sequences.
+        shuffle_buffer_size (int): Buffer size for shuffling datasets.
+        batch_size (int): Batch size for training.
+        epochs (int): Number of training epochs.
+        n_head (int): Number of attention heads in the model.
+        n_layer (int): Number of transformer layers.
+        n_embd (int): Dimension of the embedding space.
+        n_positions (int): Maximum number of positional encodings.
+        n_ctx (int): Context size for input sequences.
+    """
 
     def __init__(
         self,
@@ -34,6 +52,28 @@ class MMMTrainerBaseConfig:
         n_positions=1024,
         n_ctx=1024
         ):
+        """
+        Initializes the MMMTrainerBaseConfig with the provided parameters.
+
+        Args:
+            framework (str): Framework to use for training. Default is "pytorch".
+            tokenizer_path (str): Path to the tokenizer file.
+            dataset_train_files (list): List of training dataset file paths.
+            dataset_validate_files (list): List of validation dataset file paths.
+            pad_length (int): Maximum length of sequences after padding.
+            shuffle_buffer_size (int): Buffer size for dataset shuffling.
+            batch_size (int): Batch size for training.
+            epochs (int): Number of training epochs.
+            n_head (int): Number of attention heads.
+            n_layer (int): Number of transformer layers.
+            n_embd (int): Dimension of embedding vectors.
+            n_positions (int): Maximum number of positions for positional encoding.
+            n_ctx (int): Maximum context size for input sequences.
+
+        Raises:
+            Exception: If the framework is invalid or dataset files are missing.
+            AssertionError: If `pad_length` exceeds `n_positions`.
+        """
 
         # Check if the framework is valid.
         valid_frameworks = ["pytorch"]
@@ -66,12 +106,34 @@ class MMMTrainerBaseConfig:
 
 
 class JSBTrackConfig(MMMTrainerBaseConfig):
+    """
+    Configuration class for JSB Track-level dataset training.
+
+    Inherits from MMMTrainerBaseConfig and allows additional arguments to override default values.
+    """
 
     def __init__(self, **kwargs):
+        """
+        Initializes the JSBTrackConfig.
+
+        Args:
+            **kwargs: Additional arguments to override default configuration parameters.
+        """
         super().__init__(**kwargs)
 
 
 class JSBBarConfig(MMMTrainerBaseConfig):
+    """
+    Configuration class for JSB Bar-level dataset training.
+
+    Inherits from MMMTrainerBaseConfig and allows additional arguments to override default values.
+    """
 
     def __init__(self, **kwargs):
+        """
+        Initializes the JSBBarConfig.
+
+        Args:
+            **kwargs: Additional arguments to override default configuration parameters.
+        """
         super().__init__(**kwargs)

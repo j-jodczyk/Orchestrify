@@ -20,6 +20,18 @@ loggers_dict = {}
 
 
 def create_logger(name: str):
+    """
+    Creates or retrieves a logger with the specified name.
+
+    If a logger with the given name already exists in the `loggers_dict`,
+    it is returned. Otherwise, a new logger is created, configured, and stored.
+
+    Args:
+        name (str): Name of the logger to create or retrieve.
+
+    Returns:
+        logging.Logger: The configured logger instance.
+    """
     global loggers_dict
     if name in loggers_dict:
         return loggers_dict[name]
@@ -37,6 +49,13 @@ def create_logger(name: str):
 
 
 def set_log_level(name, level):
+    """
+    Sets the logging level for a specific logger or all loggers.
+
+    Args:
+        name (str): Name of the logger to update. Use "all" to update all loggers.
+        level (int): New logging level (e.g., logging.DEBUG, logging.INFO).
+    """
     logger_names = []
     if name == "all":
         logger_names = list(loggers_dict.keys())
