@@ -146,7 +146,13 @@ def preprocess_music21_measure(measure):
     events = []
     for note in measure.recurse(classFilter=("Note")):
         events.append(("NOTE_ON", note.pitch.midi, 4 * note.offset))
-        events.append(("NOTE_OFF", note.pitch.midi, 4 * note.offset + 4 * note.duration.quarterLength))
+        events.append(
+            (
+                "NOTE_OFF",
+                note.pitch.midi,
+                4 * note.offset + 4 * note.duration.quarterLength,
+            )
+        )
 
     bar_data = {"events": events_to_events_data(events)}
     return bar_data

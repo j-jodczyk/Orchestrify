@@ -17,7 +17,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code into the container
 COPY . .
-COPY ../src ./src
 
 # Expose the port FastAPI runs on
 EXPOSE 8000

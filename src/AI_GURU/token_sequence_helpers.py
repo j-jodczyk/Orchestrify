@@ -4,6 +4,7 @@ import note_seq
 NOTE_LENGTH_16TH_120BPM = 0.25 * 60 / 120
 BAR_LENGTH_120BPM = 4.0 * 60 / 120
 
+
 def get_priming_token_sequence(data_path, stop_on_track_end=None, stop_after_n_tokens=None, return_original=False):
 
     # Get a random token sequence from the file.
@@ -30,12 +31,14 @@ def get_priming_token_sequence(data_path, stop_on_track_end=None, stop_after_n_t
     else:
         return result, token_sequence
 
+
 def empty_note_sequence(qpm=120.0, total_time=0.0):
     note_sequence = note_seq.protobuf.music_pb2.NoteSequence()
     note_sequence.tempos.add().qpm = qpm
     note_sequence.ticks_per_quarter = note_seq.constants.STANDARD_PPQ
     note_sequence.total_time = total_time
     return note_sequence
+
 
 def getDelta(time_delta: str):
     if "/" not in time_delta:
@@ -45,6 +48,7 @@ def getDelta(time_delta: str):
         num, denom = time_delta.split("/")
         delta = int(num) / int(denom)
     return delta * NOTE_LENGTH_16TH_120BPM
+
 
 def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=True):
 
@@ -102,11 +106,7 @@ def token_sequence_to_note_sequence(token_sequence, use_program=True, use_drums=
             current_time += delta
         elif token.startswith("DENSITY="):
             pass
-        elif (
-            token == "[PAD]" or
-            token == "[UNK]" or
-            token.startswith("FILL")
-        ):
+        elif token == "[PAD]" or token == "[UNK]" or token.startswith("FILL"):
             pass
         else:
             assert False, token
