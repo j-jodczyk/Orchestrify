@@ -31,7 +31,11 @@ def analyze_midi_file(file_path, output_path):
                     for note_obj in measure.recurse(classFilter=("Note")):
                         events.append(("NOTE_ON", note_obj.pitch.midi, 4 * note_obj.offset))
                         events.append(
-                            ("NOTE_OFF", note_obj.pitch.midi, 4 * note_obj.offset + 4 * note_obj.duration.quarterLength)
+                            (
+                                "NOTE_OFF",
+                                note_obj.pitch.midi,
+                                4 * note_obj.offset + 4 * note_obj.duration.quarterLength,
+                            )
                         )
 
                     bar_data = {"events": events}

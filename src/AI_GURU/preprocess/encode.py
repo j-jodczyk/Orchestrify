@@ -20,17 +20,34 @@ import random
 import json
 
 
-def encode_songs_data(songs_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
+def encode_songs_data(
+    songs_data,
+    transpositions,
+    permute,
+    window_size_bars,
+    hop_length_bars,
+    density_bins,
+    bar_fill,
+):
 
     # This will be returned.
     token_sequences = []
 
     # Go through all songs.
     for song_data in songs_data:
-        token_sequences += encode_song_data(song_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill)
+        token_sequences += encode_song_data(
+            song_data,
+            transpositions,
+            permute,
+            window_size_bars,
+            hop_length_bars,
+            density_bins,
+            bar_fill,
+        )
 
     # Done.
     return token_sequences
+
 
 def encode_song_data_singular(song_data, density):
     """
@@ -51,6 +68,7 @@ def encode_song_data_singular(song_data, density):
         token_sequences += encoded_track_data
 
     return token_sequences
+
 
 def encode_track_data_singular(track_data, density):
     """
@@ -73,6 +91,7 @@ def encode_track_data_singular(track_data, density):
     tokens += ["TRACK_END"]
     return tokens
 
+
 def encode_bar_data_no_transposition(bar_data):
     """
     Encodes bar data without transposition (because I don't understand it)
@@ -85,13 +104,23 @@ def encode_bar_data_no_transposition(bar_data):
     tokens += ["BAR_END"]
     return tokens
 
+
 def encode_event_data_no_transposition(event_data):
     """
     Encodes event data without transposition
     """
     return encode_event_data(event_data, 0)
 
-def encode_song_data(song_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
+
+def encode_song_data(
+    song_data,
+    transpositions,
+    permute,
+    window_size_bars,
+    hop_length_bars,
+    density_bins,
+    bar_fill,
+):
 
     # This will be returned.
     token_sequences = []
@@ -129,7 +158,9 @@ def encode_song_data(song_data, transpositions, permute, window_size_bars, hop_l
             track_data = song_data["tracks"][track_data_index]
 
             # Encode the track. Insert density tokens. Also transpose.
-            encoded_track_data = encode_track_data(track_data, density_bins, bar_start_index, bar_end_index, transposition)
+            encoded_track_data = encode_track_data(
+                track_data, density_bins, bar_start_index, bar_end_index, transposition
+            )
             token_sequence += encoded_track_data
 
         # Encode the fill tokens.
@@ -225,7 +256,7 @@ def get_density_bins(songs_data, window_size_bars, hop_length_bars, bins):
                 # Do not count empty tracks.
                 if count != 0:
                     distribution += [count]
-                    
+
     if len(distribution) == 0:
         raise ValueError("Density distribution is empty. Ensure training data contains valid songs.")
 
@@ -278,4 +309,9 @@ def get_bars_number(song_data):
 
 
 def get_bar_indices(bars, window_size_bars, hop_length_bars):
-    return list(zip(range(0, bars, hop_length_bars), range(window_size_bars, bars, hop_length_bars)))
+    return list(
+        zip(
+            range(0, bars, hop_length_bars),
+            range(window_size_bars, bars, hop_length_bars),
+        )
+    )

@@ -34,9 +34,7 @@ def verify_paths(path_to_midi, output_path):
         NotADirectoryError: If the output path is not a directory.
     """
     if not os.path.isfile(path_to_midi):
-        raise FileNotFoundError(
-            f"The midi file at path '{path_to_midi}' does not exist."
-        )
+        raise FileNotFoundError(f"The midi file at path '{path_to_midi}' does not exist.")
 
     if not path_to_midi.endswith(".mid"):
         raise InvalidFileFormatError("Input file must be of MIDI format")
@@ -56,9 +54,7 @@ def verify_model(model_name):
         UnknownModelError: If the model name is not in the available models list.
     """
     if not model_name in models.keys():
-        raise UnknownModelError(
-            f"{model_name} is not an available model. Available: {models.keys()}"
-        )
+        raise UnknownModelError(f"{model_name} is not an available model. Available: {models.keys()}")
 
 
 def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=False):
@@ -79,9 +75,7 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=F
     song_data = preprocess_music21_song(score)
     parsed_midi = encode_song_data_singular(song_data, density)
 
-    tokenizer_path = hf_hub_download(
-        repo_id=tokenizer_repo, filename=TOKENIZER_FILENAME, repo_type="dataset"
-    )
+    tokenizer_path = hf_hub_download(repo_id=tokenizer_repo, filename=TOKENIZER_FILENAME, repo_type="dataset")
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_path)
     tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
@@ -91,13 +85,11 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo, save_tokens=F
     generated_sequence = model.generate(input_ids, max_length=1000, do_sample=True)
     decoded_sequence = tokenizer.decode(generated_sequence[0])
 
-    generated_note_sequence = token_sequence_to_note_sequence(
-        decoded_sequence, use_program=True, use_drums=True
-    )
+    generated_note_sequence = token_sequence_to_note_sequence(decoded_sequence, use_program=True, use_drums=True)
 
-    if (save_tokens):
+    if save_tokens:
         data = {"original": " ".join(parsed_midi), "generated": decoded_sequence}
-        with open(os.path.join('.', "data.json"), "w+") as f:
+        with open(os.path.join(".", "data.json"), "w+") as f:
             json.dump(data, f)
 
     return generated_note_sequence
@@ -128,6 +120,6 @@ def main():
     repos = models[model_name]
     generate_midi_score(midi_path, density, repos["tokenizer"], repos["model"], True)
 
+
 if __name__ == "__main__":
     main()
-

@@ -15,7 +15,9 @@ class ParseTimeoutError(Exception):
     Custom exception for MIDI parsing timeout.
     We don't want parsing timeout to affect the running of the script, so the Error is handled quietly.
     """
+
     pass
+
 
 def parse_with_timeout(file_path, timeout=5):
     """

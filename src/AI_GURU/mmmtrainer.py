@@ -56,19 +56,19 @@ class MMMTrainer:
             raise Exception(f"No tokenizer found at {self.config.tokenizer_path}")
         tokenizer = Tokenizer.from_file(self.config.tokenizer_path)
         pretrained_tokenizer = PreTrainedTokenizerFast(tokenizer_file=self.config.tokenizer_path)
-        pretrained_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+        pretrained_tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
         # Create the model.
         model_config = GPT2Config(
             vocab_size=tokenizer.get_vocab_size(),
-            #bos_token_id=tokenizer.token_to_id("PIECE_START"),
-            #eos_token_id=tokenizer.token_to_id("PIECE_END"),
+            # bos_token_id=tokenizer.token_to_id("PIECE_START"),
+            # eos_token_id=tokenizer.token_to_id("PIECE_END"),
             pad_token_id=tokenizer.token_to_id("[PAD]"),
             n_head=self.config.n_head,
             n_layer=self.config.n_layer,
             n_embd=self.config.n_embd,
             n_positions=self.config.n_positions,
-            n_ctx=self.config.n_ctx
+            n_ctx=self.config.n_ctx,
         )
         model = GPT2LMHeadModel(model_config)
 
@@ -78,7 +78,7 @@ class MMMTrainer:
             tokenizer=pretrained_tokenizer,
             dataset_paths=self.config.dataset_train_files,
             block_size=self.config.pad_length,
-            simulate=simulate
+            simulate=simulate,
         )
 
         # Prepare the validation dataset.
@@ -87,14 +87,14 @@ class MMMTrainer:
             tokenizer=pretrained_tokenizer,
             dataset_paths=self.config.dataset_validate_files,
             block_size=self.config.pad_length,
-            simulate=simulate
+            simulate=simulate,
         )
 
         # Prepare data collator.
         data_collator = DataCollatorWithPadding(
             tokenizer=pretrained_tokenizer,
             padding="max_length",
-            max_length=self.config.pad_length
+            max_length=self.config.pad_length,
         )
 
         # Create the trainer.
@@ -110,14 +110,14 @@ class MMMTrainer:
             logging_strategy="steps",
             logging_dir=os.path.join(output_path, "logs"),
             load_best_model_at_end=True,
-            save_strategy="steps"
+            save_strategy="steps",
         )
         trainer = Trainer(
             model=model,
             args=training_args,
             data_collator=data_collator,
             train_dataset=dataset_train,
-            eval_dataset=dataset_valid
+            eval_dataset=dataset_valid,
         )
 
         # Train the model.
@@ -156,7 +156,7 @@ class TokenSequenceDataset(Dataset):
         encoded_lengths = []
         for line in tqdm(lines):
 
-            #Skip empty lines.
+            # Skip empty lines.
             line = line.strip()
             if line == "":
                 continue
@@ -173,26 +173,28 @@ class TokenSequenceDataset(Dataset):
                 token = line.split()[index]
                 if token not in unknown_tokens_set:
                     unknown_tokens_set += [token]
-                #logger.warning(f"Skipping line because of unknown token {token}")
+                # logger.warning(f"Skipping line because of unknown token {token}")
                 unknown_tokens += [token]
                 unknown_token_lines_count += 1
                 continue
 
             # Skip sequence if it is too long.
             if len(encoded_line) > block_size:
-                #logger.warning(f"Skipping line because it is too long... {len(encoded_line)} > {block_size}")
+                # logger.warning(f"Skipping line because it is too long... {len(encoded_line)} > {block_size}")
                 too_long_lines_count += 1
                 continue
 
             # Pad and truncate.
             tensor = np.full((block_size,), pad_token_id, dtype=np.longlong)
-            tensor[:len(encoded_line)] = encoded_line
+            tensor[: len(encoded_line)] = encoded_line
             assert len(tensor) == block_size
 
-            self.examples += [{
-                "input_ids": torch.tensor(tensor, dtype=torch.long),
-                "labels": torch.tensor(tensor, dtype=torch.long)
-            }]
+            self.examples += [
+                {
+                    "input_ids": torch.tensor(tensor, dtype=torch.long),
+                    "labels": torch.tensor(tensor, dtype=torch.long),
+                }
+            ]
 
     def __len__(self):
         return len(self.examples)

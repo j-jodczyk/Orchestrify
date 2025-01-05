@@ -2,6 +2,7 @@ import os
 import zipfile
 import shutil
 
+
 def shorten_path_name(original_path, max_length=250):
     """
     Shortens a file path to ensure its total length does not exceed the specified maximum length.

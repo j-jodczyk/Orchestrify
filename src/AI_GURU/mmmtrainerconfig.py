@@ -16,6 +16,7 @@
 
 import os
 
+
 class MMMTrainerBaseConfig:
 
     def __init__(
@@ -32,8 +33,8 @@ class MMMTrainerBaseConfig:
         n_layer=6,
         n_embd=512,
         n_positions=1024,
-        n_ctx=1024
-        ):
+        n_ctx=1024,
+    ):
 
         # Check if the framework is valid.
         valid_frameworks = ["pytorch"]
@@ -43,7 +44,9 @@ class MMMTrainerBaseConfig:
 
         # Check if any dataset files are missing.
         missing_dataset_files = []
-        missing_dataset_files = [file for file in dataset_train_files + dataset_validate_files if not os.path.exists(file)]
+        missing_dataset_files = [
+            file for file in dataset_train_files + dataset_validate_files if not os.path.exists(file)
+        ]
         if len(missing_dataset_files) != 0:
             error_string = f"Missing dataset files {missing_dataset_files}."
             raise Exception(error_string)

@@ -3,7 +3,13 @@ Contains script for transfer learning the model.
 """
 
 import os
-from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel, DataCollatorWithPadding, Trainer, TrainingArguments
+from transformers import (
+    PreTrainedTokenizerFast,
+    GPT2LMHeadModel,
+    DataCollatorWithPadding,
+    Trainer,
+    TrainingArguments,
+)
 from src.AI_GURU.token_sequence_dataset import TokenSequenceDataset
 
 
@@ -20,7 +26,7 @@ def transfer_learn_model(
     learning_rate=5e-5,
     weight_decay=0.01,
     save_steps=500,
-    logging_steps=500
+    logging_steps=500,
 ):
     """
     Fine-tunes a pre-trained model using transfer learning.
@@ -45,25 +51,21 @@ def transfer_learn_model(
     """
     model = GPT2LMHeadModel.from_pretrained(model_path)
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_path)
-    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
-    data_collator = DataCollatorWithPadding(
-        tokenizer=tokenizer,
-        padding="max_length",
-        max_length=block_size
-    )
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer, padding="max_length", max_length=block_size)
 
     dataset_train = TokenSequenceDataset(
         tokenizer=tokenizer,
         dataset_paths=[train_dataset_path],
         block_size=block_size,
-        simulate=False
+        simulate=False,
     )
     dataset_valid = TokenSequenceDataset(
         tokenizer=tokenizer,
         dataset_paths=[valid_dataset_path],
         block_size=block_size,
-        simulate=False
+        simulate=False,
     )
 
     model.resize_token_embeddings(len(tokenizer))
@@ -100,7 +102,7 @@ def transfer_learn_model(
         per_device_eval_batch_size=batch_size,
         load_best_model_at_end=True,
         learning_rate=learning_rate,
-        weight_decay=weight_decay
+        weight_decay=weight_decay,
     )
 
     trainer = Trainer(
@@ -108,7 +110,7 @@ def transfer_learn_model(
         args=training_args,
         data_collator=data_collator,
         train_dataset=dataset_train,
-        eval_dataset=dataset_valid
+        eval_dataset=dataset_valid,
     )
 
     trainer.train()
@@ -120,9 +122,9 @@ def transfer_learn_model(
 
 if __name__ == "__main__":
     model_path = "Milos121/MMM_jsb_mmmbar"
-    tokenizer_path = '../../data/external/Jazz Midi/jsb_mmmtrack/tokenizer.json'
-    train_dataset_path = '../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_train.txt'
-    valid_dataset_path = '../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_valid.txt'
+    tokenizer_path = "../../data/external/Jazz Midi/jsb_mmmtrack/tokenizer.json"
+    train_dataset_path = "../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_train.txt"
+    valid_dataset_path = "../../data/external/Jazz Midi/jsb_mmmtrack/token_sequences_valid.txt"
     output_path = "../models"
 
     transfer_learn_model(
@@ -138,5 +140,5 @@ if __name__ == "__main__":
         learning_rate=5e-5,
         weight_decay=0.01,
         save_steps=500,
-        logging_steps=500
+        logging_steps=500,
     )

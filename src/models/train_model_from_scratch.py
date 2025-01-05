@@ -27,7 +27,7 @@ def train_model(
     shuffle_buffer_size=10000,
     batch_size=16,
     epochs=10,
-    simulate=False
+    simulate=False,
 ):
     """
     Trains a model using the specified dataset and configuration.
@@ -64,10 +64,7 @@ def train_model(
     trainer = MMMTrainer(trainer_config)
     print("Trainer initialized")
 
-    trainer.train(
-        output_path=output_path,
-        simulate=simulate
-    )
+    trainer.train(output_path=output_path, simulate=simulate)
     print("Training completed")
 
 
@@ -76,9 +73,9 @@ if __name__ == "__main__":
     # dataset_path = kagglehub.dataset_download("imsparsh/lakh-midi-clean")
     # dataset_path = kagglehub.dataset_download("anujtrehan007/midi-songs")
     dataset_path = "data/test_dataset"
-    train_file = os.path.join(dataset_path, 'jsb_mmmbar', 'token_sequences_train.txt')
-    valid_file = os.path.join(dataset_path, 'jsb_mmmbar', 'token_sequences_valid.txt')
-    tokenizer_file = os.path.join(dataset_path, 'jsb_mmmbar', 'tokenizer.json')
+    train_file = os.path.join(dataset_path, "jsb_mmmbar", "token_sequences_train.txt")
+    valid_file = os.path.join(dataset_path, "jsb_mmmbar", "token_sequences_valid.txt")
+    tokenizer_file = os.path.join(dataset_path, "jsb_mmmbar", "tokenizer.json")
     output_path = "../models"
 
     train_model(
@@ -91,5 +88,5 @@ if __name__ == "__main__":
         shuffle_buffer_size=10000,
         batch_size=16,
         epochs=10,
-        simulate="simulate" in sys.argv
+        simulate="simulate" in sys.argv,
     )

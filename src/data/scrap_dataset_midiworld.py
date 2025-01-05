@@ -10,6 +10,7 @@ os.makedirs(output_folder, exist_ok=True)
 
 num_pages = 1  # 0 means all available pages
 
+
 def download_midi_files(page_url):
     """
     Download all MIDI files from a given search results page.
@@ -55,6 +56,7 @@ def download_midi_files(page_url):
         print(f"Error processing page {page_url}: {e}")
         return False
 
+
 def process_pages(num_pages):
     """
     Main function to iterate through pages and process them.
@@ -78,6 +80,7 @@ def process_pages(num_pages):
             break
 
         page_num += 1
+
 
 process_pages(num_pages)
 
