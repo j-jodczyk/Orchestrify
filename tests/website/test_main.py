@@ -22,9 +22,7 @@ def test_get_models(client, monkeypatch):
     def mock_handle_get_models():
         return {"models": ["model1", "model2"]}
 
-    monkeypatch.setattr(
-        "website.backend.main.handle_get_models", mock_handle_get_models
-    )
+    monkeypatch.setattr("website.backend.main.handle_get_models", mock_handle_get_models)
 
     response = client.get("/models")
     assert response.status_code == 200
@@ -46,9 +44,7 @@ async def test_generate_midi_success(client, monkeypatch, tmpdir):
         midi_data = b"Mock MIDI data"
         return StreamingResponse(io.BytesIO(midi_data), media_type="audio/midi")
 
-    monkeypatch.setattr(
-        "website.backend.main.handle_generate_midi", mock_handle_generate_midi
-    )
+    monkeypatch.setattr("website.backend.main.handle_generate_midi", mock_handle_generate_midi)
 
     mock_file = tmpdir.join("test.mid")
     mock_file.write("Mock content")

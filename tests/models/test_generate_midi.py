@@ -64,47 +64,31 @@ def test_generate_midi(monkeypatch):
     mock_parse = MagicMock(return_value=Score())
     monkeypatch.setattr("src.models.generate_midi.converter.parse", mock_parse)
     mock_preprocess = MagicMock(return_value={})
-    monkeypatch.setattr(
-        "src.models.generate_midi.preprocess_music21_song", mock_preprocess
-    )
+    monkeypatch.setattr("src.models.generate_midi.preprocess_music21_song", mock_preprocess)
     mock_encode = MagicMock(return_value=[])
-    monkeypatch.setattr(
-        "src.models.generate_midi.encode_song_data_singular", mock_encode
-    )
+    monkeypatch.setattr("src.models.generate_midi.encode_song_data_singular", mock_encode)
     mock_download = MagicMock(return_value="tokenizer_path")
     monkeypatch.setattr("src.models.generate_midi.hf_hub_download", mock_download)
     mock_tokenizer = Mock()
     mock_tokenizer_obj = Mock()
     mock_tokenizer.return_value = mock_tokenizer_obj
-    monkeypatch.setattr(
-        "src.models.generate_midi.PreTrainedTokenizerFast", mock_tokenizer
-    )
+    monkeypatch.setattr("src.models.generate_midi.PreTrainedTokenizerFast", mock_tokenizer)
     mock_model = Mock()
     mock_model_obj = Mock()
     mock_model_obj.generate.return_value = ["first token"]
     mock_model.return_value = mock_model_obj
-    monkeypatch.setattr(
-        "src.models.generate_midi.GPT2LMHeadModel.from_pretrained", mock_model
-    )
+    monkeypatch.setattr("src.models.generate_midi.GPT2LMHeadModel.from_pretrained", mock_model)
     mock_convert = MagicMock(return_value=note_seq.protobuf.music_pb2.NoteSequence())
-    monkeypatch.setattr(
-        "src.models.generate_midi.token_sequence_to_note_sequence", mock_convert
-    )
+    monkeypatch.setattr("src.models.generate_midi.token_sequence_to_note_sequence", mock_convert)
 
-    generate_midi_score(
-        "/path/to/midi", 0.5, "tokenizer_repo", "model_repo", False
-    )  # todo: parametrize save_tokens
+    generate_midi_score("/path/to/midi", 0.5, "tokenizer_repo", "model_repo", False)  # todo: parametrize save_tokens
 
     mock_parse.assert_called_once_with("/path/to/midi")
     mock_preprocess.assert_called_once()
     mock_encode.assert_called_once()
-    mock_download.assert_called_once_with(
-        repo_id="tokenizer_repo", filename="tokenizer.json", repo_type="dataset"
-    )
+    mock_download.assert_called_once_with(repo_id="tokenizer_repo", filename="tokenizer.json", repo_type="dataset")
     mock_tokenizer.assert_called_once_with(tokenizer_file="tokenizer_path")
-    mock_tokenizer_obj.add_special_tokens.assert_called_once_with(
-        {"pad_token": "[PAD]"}
-    )
+    mock_tokenizer_obj.add_special_tokens.assert_called_once_with({"pad_token": "[PAD]"})
     mock_tokenizer_obj.encode.assert_called_once()
     mock_tokenizer_obj.decode.assert_called_once()
     mock_model_obj.generate.assert_called_once()
