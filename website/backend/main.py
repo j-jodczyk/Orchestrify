@@ -1,8 +1,8 @@
 import json
 from fastapi import FastAPI, Request, UploadFile, Response, File
 from fastapi.middleware.cors import CORSMiddleware
-from website.backend.handlers.get_models import handle_get_models
-from website.backend.handlers.generate_midi import handle_generate_midi
+from handlers.get_models import handle_get_models
+from handlers.generate_midi import handle_generate_midi
 
 
 app = FastAPI()
