@@ -7,7 +7,7 @@ Website allows you to easily try out all models. To get it running locally:
 3. Execute `uvicorn main:app --reload`
 ## Frontend
 1. Navigate to `/website/frontend`
-2. Build by running `npm run build`
+2. Build by running `npm i`
 3. Execute `npm run dev`
 
 ## Docker

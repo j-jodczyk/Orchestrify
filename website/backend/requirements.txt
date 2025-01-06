@@ -3,4 +3,5 @@ note_seq==0.0.5
 pydantic==2.10.4
 website==1.1
 python-multipart==0.0.20
+selenium==4.27.1
 -e git+https://github.com/j-jodczyk/Orchestrify.git@main#egg=src

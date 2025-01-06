@@ -6,7 +6,7 @@ import os
 import note_seq
 import tempfile
 from src.models.models_list import models
-from src.models.generate_midi import generate_midi_score
+from src.models.generate_midi import generate_orchestrified_midi
 
 TOKENIZER_FILENAME = "tokenizer.json"
 
@@ -54,7 +54,7 @@ async def handle_generate_midi(form_data: dict, file: UploadFile = File(...)):
             temp_file.write(await file.read())
             temp_filepath = temp_file.name
 
-        generated_midi_score = generate_midi_score(
+        generated_midi_score = generate_orchestrified_midi(
             temp_filepath, generate_params.density, repos["tokenizer"], repos["model"]
         )
 
