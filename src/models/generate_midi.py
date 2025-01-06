@@ -58,6 +58,7 @@ def verify_model(model_name):
     if not model_name in models.keys():
         raise UnknownModelError(f"{model_name} is not an available model. Available: {models.keys()}")
 
+
 def combine_note_sequneces(note_sequence1, note_sequence2):
     """
     Overlays two sequences.
@@ -79,6 +80,7 @@ def combine_note_sequneces(note_sequence1, note_sequence2):
     combined_sequence.notes.sort(key=lambda note: note.start_time)
     return combined_sequence
 
+
 def generate_midi_score(midi, density, tokenizer_repo, model_repo, max_length=1000, save_tokens=False):
     """
     Generates an enriched MIDI score using the specified model and tokenizer.
@@ -98,7 +100,8 @@ def generate_midi_score(midi, density, tokenizer_repo, model_repo, max_length=10
     song_data = preprocess_music21_song(score)
     parsed_midi = encode_song_data_singular(song_data, density)
 
-    tokenizer_path = hf_hub_download(repo_id=tokenizer_repo, filename=TOKENIZER_FILENAME, repo_type="dataset")
+    repo_type = "model" if tokenizer_repo == model_repo else "dataset"
+    tokenizer_path = hf_hub_download(repo_id=tokenizer_repo, filename=TOKENIZER_FILENAME, repo_type=repo_type)
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=tokenizer_path)
     tokenizer.add_special_tokens({"pad_token": "[PAD]"})
 
