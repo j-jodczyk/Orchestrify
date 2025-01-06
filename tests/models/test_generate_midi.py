@@ -89,7 +89,7 @@ def test_generate_midi(monkeypatch, save_tokens):
 
     generate_midi_score(
         "/path/to/midi", 0.5, "tokenizer_repo", "model_repo", save_tokens=save_tokens
-    )  # todo: parametrize save_tokens
+    )
 
     mock_parse.assert_called_once_with("/path/to/midi")
     mock_preprocess.assert_called_once()
