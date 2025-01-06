@@ -4,9 +4,15 @@ import { useState } from "react";
 import "@fontsource/roboto";
 import UploadForm, { MidiData } from "./components/UploadForm";
 import PlayButton from "./components/PlayButton";
+import PianoRollButton from "./components/PianoRollButton";
 
 const HomePage: React.FC = () => {
   const [midiData, setMidiData] = useState<MidiData | null>(null);
+  const [iframeSrc, setIframeSrc] = useState<string>("");
+
+  const handleFetchPianoRoll = (url: string) => {
+    setIframeSrc(url);
+  };
 
   const onFormSubmit = async (respData: MidiData) => {
     setMidiData(respData);
@@ -29,7 +35,20 @@ const HomePage: React.FC = () => {
                 DOWNLOAD
               </a>
             </div>
+            <PianoRollButton
+              midiBlob={midiData.blob}
+              handleFetchPianoRoll={handleFetchPianoRoll}
+            />
           </div>
+          {iframeSrc && (
+            <iframe
+              src={iframeSrc}
+              title="Piano Roll"
+              width="100%"
+              height="300"
+              frameBorder="0"
+            />
+          )}
         </div>
       )}
     </div>

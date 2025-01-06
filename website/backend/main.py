@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, UploadFile, Response, File
 from fastapi.middleware.cors import CORSMiddleware
 from handlers.get_models import handle_get_models
 from handlers.generate_midi import handle_generate_midi
+from handlers.get_pianoroll import handle_get_painoroll
 
 
 app = FastAPI()
@@ -55,4 +56,15 @@ async def generate_midi(request: Request, file: UploadFile = None):
     form_data = {key: form_data[key] for key in form_data if key != "file"}
 
     res = await handle_generate_midi(form_data, file)
+    return res
+
+@app.post("/pianoroll")
+async def get_pianoroll_snippet(file: UploadFile = None):
+    if file is None:
+        return Response(
+            content=json.dumps({"success": False, "message": "Missing file"}),
+            status_code=400,
+        )
+
+    res = await handle_get_painoroll(file)
     return res
