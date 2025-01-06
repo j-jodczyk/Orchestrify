@@ -22,7 +22,7 @@ import json
 
 def encode_songs_data(songs_data, transpositions, permute, window_size_bars, hop_length_bars, density_bins, bar_fill):
     """
-    Encodes a single song into tokens without additional dataset context.
+    Encodes songs into tokens without additional dataset context.
 
     Args:
         songs_data (list): List of dictionaries, each representing a single song.
