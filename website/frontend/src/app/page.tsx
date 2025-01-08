@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="bg-background-800 h-screen text-white font-roboto content-center justify-items-center">
+    <div className="bg-background-800 h-screen text-white font-roboto content-center justify-items-center pb-2">
       <h1 className="pt-6 text-center text-7xl">ORCHESTRIFY</h1>
       <p className="text-center text-accent-200 pt-8">
         Create an accompaniament for a midi file!

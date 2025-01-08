@@ -10,7 +10,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-background-800">
         <nav className="bg-background-800 border-b border-background-400 text-white flex gap-4 p-3 ">
           <Link href="/" style={{ textDecoration: "none" }}>
             Home

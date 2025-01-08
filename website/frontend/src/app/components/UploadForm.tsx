@@ -191,7 +191,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ onFormSubmit }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-accent-300 text-center w-40 p-2 rounded-lg mt-6"
+                className="bg-accent-300 text-center w-40 p-2 rounded-lg my-6"
               >
                 {isSubmitting ? "LOADING..." : "GENERATE"}
               </button>
