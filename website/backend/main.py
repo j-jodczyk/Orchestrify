@@ -35,7 +35,7 @@ async def get_models():
     return handle_get_models()
 
 
-@app.post("/generate/")
+@app.post("/generate")
 async def generate_midi(request: Request, file: UploadFile = None):
     """
     Endpoint to generate MIDI files from provided data and file.
@@ -57,6 +57,7 @@ async def generate_midi(request: Request, file: UploadFile = None):
 
     res = await handle_generate_midi(form_data, file)
     return res
+
 
 @app.post("/pianoroll")
 async def get_pianoroll_snippet(file: UploadFile = None):

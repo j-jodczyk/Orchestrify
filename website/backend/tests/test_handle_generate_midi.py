@@ -5,7 +5,7 @@ import note_seq
 import io
 from fastapi import UploadFile
 from fastapi.exceptions import HTTPException
-from website.backend.handlers.generate_midi import handle_generate_midi, GenerateParams
+from handlers.generate_midi import handle_generate_midi, GenerateParams
 
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def mock_large_file():
 
 
 def test_generate_midi_validation_error(mock_models, monkeypatch):
-    monkeypatch.setattr("website.backend.handlers.generate_midi.models", mock_models)
+    monkeypatch.setattr("handlers.generate_midi.models", mock_models)
 
     invalid_params = {"model": "invalid_model", "density": 1.5}
     with pytest.raises(ValueError) as excinfo:
@@ -48,16 +48,16 @@ def test_generate_midi_validation_error(mock_models, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_generate_midi_success(mock_models, mock_generate_params, mock_file, monkeypatch):
-    def mock_generate_midi_score(input_file, density, tokenizer, model):
+    def mock_generate_orchestrified_midi(input_file, density, tokenizer, model):
         note_sequence = note_seq.protobuf.music_pb2.NoteSequence()
         note_sequence.tempos.add().qpm = 120.0
         note_sequence.ticks_per_quarter = note_seq.constants.STANDARD_PPQ
         return note_sequence
 
-    monkeypatch.setattr("website.backend.handlers.generate_midi.models", mock_models)
+    monkeypatch.setattr("handlers.generate_midi.models", mock_models)
     monkeypatch.setattr(
-        "website.backend.handlers.generate_midi.generate_midi_score",
-        mock_generate_midi_score,
+        "handlers.generate_midi.generate_orchestrified_midi",
+        mock_generate_orchestrified_midi,
     )
 
     response = await handle_generate_midi(mock_generate_params, mock_file)
@@ -68,14 +68,14 @@ async def test_generate_midi_success(mock_models, mock_generate_params, mock_fil
 
 @pytest.mark.asyncio
 async def test_generate_midi_large_file(mock_models, mock_generate_params, mock_large_file, monkeypatch):
-    monkeypatch.setattr("website.backend.handlers.generate_midi.models", mock_models)
+    monkeypatch.setattr("handlers.generate_midi.models", mock_models)
 
-    def mock_generate_midi_score(input_file, density, tokenizer, model):
+    def mock_generate_orchestrified_midi(input_file, density, tokenizer, model):
         raise ValueError("File too large!")
 
     monkeypatch.setattr(
-        "website.backend.handlers.generate_midi.generate_midi_score",
-        mock_generate_midi_score,
+        "handlers.generate_midi.generate_orchestrified_midi",
+        mock_generate_orchestrified_midi,
     )
 
     with pytest.raises(HTTPException) as excinfo:
@@ -87,13 +87,13 @@ async def test_generate_midi_large_file(mock_models, mock_generate_params, mock_
 
 @pytest.mark.asyncio
 async def test_generate_midi_unexpected_error(mock_models, mock_generate_params, mock_file, monkeypatch):
-    async def mock_generate_midi_score(input_file, density, tokenizer, model):
+    async def mock_generate_orchestrified_midi(input_file, density, tokenizer, model):
         raise Exception("Unexpected error!")
 
-    monkeypatch.setattr("website.backend.handlers.generate_midi.models", mock_models)
+    monkeypatch.setattr("handlers.generate_midi.models", mock_models)
     monkeypatch.setattr(
-        "website.backend.handlers.generate_midi.generate_midi_score",
-        mock_generate_midi_score,
+        "handlers.generate_midi.generate_orchestrified_midi",
+        mock_generate_orchestrified_midi,
     )
 
     with pytest.raises(HTTPException) as excinfo:
