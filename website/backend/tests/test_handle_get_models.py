@@ -1,5 +1,5 @@
 import pytest
-from website.backend.handlers.get_models import handle_get_models
+from ..handlers.get_models import handle_get_models
 
 
 @pytest.fixture

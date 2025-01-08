@@ -28,7 +28,7 @@ def test_get_models(client, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_generate_midi_no_file(client):
-    response = client.post("/generate/", data={})
+    response = client.post("/generate", data={})
     assert response.status_code == 400
     assert response.json() == {"success": False, "message": "Missing file"}
 
@@ -48,10 +48,38 @@ async def test_generate_midi_success(client, monkeypatch, tmpdir):
 
     with open(mock_file, "rb") as file:
         response = client.post(
-            "/generate/",
+            "/generate",
             files={"file": ("test.mid", file)},
             data={"model": "model1", "density": 0.5},
         )
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "audio/midi"
+
+
+@pytest.mark.asyncio
+async def test_get_pianoroll_no_file(client):
+    response = client.post("/pianoroll", files={})
+    assert response.status_code == 400
+    assert response.json() == {"success": False, "message": "Missing file"}
+
+
+@pytest.mark.asyncio
+async def test_generate_midi_success(client, monkeypatch, tmpdir):
+    from fastapi.responses import StreamingResponse
+
+    async def mock_handle_get_pianoroll(file):
+        "<html>Mock HTML</html>"
+
+    monkeypatch.setattr("website.backend.main.handle_get_painoroll", mock_handle_get_pianoroll)
+
+    mock_file = tmpdir.join("test.mid")
+    mock_file.write("Mock content")
+
+    with open(mock_file, "rb") as file:
+        response = client.post(
+            "/pianoroll",
+            files={"file": ("test.mid", file)},
+        )
+
+    assert response.status_code == 200

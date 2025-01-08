@@ -42,7 +42,7 @@
                 }
             }
         },
-        "/generate/": {
+        "/generate": {
             "post": {
                 "summary": "Generate MIDI",
                 "description": "Generates a MIDI file based on the uploaded input file and parameters.",
