@@ -28,12 +28,14 @@ def cut_midi(input_path, output_directory):
             new_instrument = pretty_midi.Instrument(program=instrument.program, is_drum=instrument.is_drum)
             for note in instrument.notes:
                 if fragment_start <= note.start < fragment_end:
-                    new_instrument.notes.append(pretty_midi.Note(
-                        velocity=note.velocity,
-                        pitch=note.pitch,
-                        start=max(note.start, fragment_start) - fragment_start,
-                        end=min(note.end, fragment_end) - fragment_start
-                    ))
+                    new_instrument.notes.append(
+                        pretty_midi.Note(
+                            velocity=note.velocity,
+                            pitch=note.pitch,
+                            start=max(note.start, fragment_start) - fragment_start,
+                            end=min(note.end, fragment_end) - fragment_start,
+                        )
+                    )
             new_midi.instruments.append(new_instrument)
 
         output_file = f"{output_directory}/{input_file.split('.')[0]}_fragment_{fragment_number}.mid"
@@ -67,10 +69,40 @@ def extract_midi_segment(input_path, output_directory, segment_duration=5):
                     velocity=note.velocity,
                     pitch=note.pitch,
                     start=max(0, note.start - segment_start),
-                    end=max(0, note.end - segment_start)
+                    end=max(0, note.end - segment_start),
                 )
                 new_instrument.notes.append(new_note)
         extracted_midi.instruments.append(new_instrument)
 
     output_file = f"{output_directory}/{input_file}"
     extracted_midi.write(output_file)
+
+
+def extract_midi_segment_instrument(input_path, output_directory, segment_duration=5):
+    input_file = os.path.basename(input_path)
+    if os.path.exists(f"{output_directory}/{input_file}"):
+        # file already was sliced - return
+        return
+    midi = pretty_midi.PrettyMIDI(input_file)
+
+    total_duration = midi.get_end_time()
+
+    middle_time = total_duration / 2
+    segment_start = max(0, middle_time - segment_duration / 2)
+    segment_end = segment_start + segment_duration
+
+    for index, instrument in enumerate(midi.instruments):
+        extracted_midi = pretty_midi.PrettyMIDI()
+        new_instrument = pretty_midi.Instrument(program=instrument.program, is_drum=instrument.is_drum)
+        for note in instrument.notes:
+            if segment_start <= note.start <= segment_end:
+                new_note = pretty_midi.Note(
+                    velocity=note.velocity,
+                    pitch=note.pitch,
+                    start=max(0, note.start - segment_start),
+                    end=max(0, note.end - segment_start),
+                )
+                new_instrument.notes.append(new_note)
+        extracted_midi.instruments.append(new_instrument)
+        output_file = f"{output_directory}/{input_file.split('.')[0]}_{index}.mid"
+        extracted_midi.write(output_file)
