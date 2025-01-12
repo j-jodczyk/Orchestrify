@@ -11,15 +11,12 @@ logger = logging.getLogger("filter_midi")
 
 
 class ParseTimeoutError(Exception):
-    """
-    Custom exception for MIDI parsing timeout.
-    We don't want parsing timeout to affect the running of the script, so the Error is handled quietly.
-    """
+    """Exception raised when MIDI parsing exceeds the allowed timeout."""
 
     pass
 
 
-def parse_with_timeout(file_path, timeout=5):
+def parse_with_timeout(file_path, timeout=20):
     """
     Parses a MIDI file within a specified timeout.
 
@@ -43,7 +40,7 @@ def parse_with_timeout(file_path, timeout=5):
         except Exception as e:
             exception[0] = e
 
-    parse_thread = threading.Thread(target=parse_file)
+    parse_thread = threading.Thread(target=parse_file, daemon=True)
     parse_thread.start()
     parse_thread.join(timeout)
 
@@ -112,7 +109,7 @@ def process_midi_file(midi_file, output_directory):
         return None
 
     try:
-        _ = parse_with_timeout(midi_file, timeout=5)
+        _ = parse_with_timeout(midi_file, timeout=20)
         output_path = os.path.join(output_directory, os.path.basename(midi_file))
         shutil.copyfile(midi_file, output_path)
         logger.info(f"Copied valid file: {midi_file} to {output_path}")
@@ -146,9 +143,12 @@ def filter_and_collect_midi(midi_files, output_directory, max_workers=4):
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(process_midi_file, f, output_directory) for f in midi_files]
         for future in futures:
-            result = future.result()
-            if result is not None:
-                processed_files.append(result)
+            try:
+                result = future.result()
+                if result is not None:
+                    processed_files.append(result)
+            except Exception as e:
+                logger.error(f"Error during MIDI file processing: {e}")
 
     logger.info(f"Done processing. {len(processed_files)} files successfully copied to {output_directory}.")
     return processed_files

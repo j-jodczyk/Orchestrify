@@ -7,8 +7,8 @@ import os
 import sys
 
 # Sometimes, it may be necessary to add the project root to ensure the imports work correctly
-# project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-# sys.path.insert(0, project_root)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+sys.path.insert(0, project_root)
 
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 
@@ -72,11 +72,11 @@ def train_model(
 if __name__ == "__main__":
     # dataset_path = kagglehub.dataset_download("imsparsh/lakh-midi-clean")
     # dataset_path = kagglehub.dataset_download("anujtrehan007/midi-songs")
-    dataset_path = "data/test_dataset"
+    dataset_path = "path_to_dataset_folder"
     train_file = os.path.join(dataset_path, "jsb_mmmbar", "token_sequences_train.txt")
     valid_file = os.path.join(dataset_path, "jsb_mmmbar", "token_sequences_valid.txt")
     tokenizer_file = os.path.join(dataset_path, "jsb_mmmbar", "tokenizer.json")
-    output_path = "../models"
+    output_path = "path_to_output_folder"
 
     train_model(
         dataset_path=dataset_path,

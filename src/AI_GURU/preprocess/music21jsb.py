@@ -31,18 +31,20 @@ class ParseTimeoutError(Exception):
     pass
 
 
-def parse_with_timeout(file_path):
+def parse_with_timeout(file_path, timeout=None):
     """
-    Parses a MIDI file with a timeout to prevent hanging.
+    Parses a MIDI file with optional timeout.
 
     Args:
-        file_path (str): Path to the MIDI file.
+        file_path (str): Path to the MIDI file to parse.
+        timeout (int, optional): Maximum allowed parsing time in seconds. Defaults to None.
 
     Returns:
-        music21.stream.Score: Parsed music21 score.
+        music21.stream.Score: Parsed MIDI file.
 
     Raises:
-        Exception: If parsing fails.
+        ParseTimeoutError: If parsing exceeds the specified timeout.
+        Exception: If an error occurs during parsing.
     """
     result = [None]
     exception = [None]
@@ -53,9 +55,13 @@ def parse_with_timeout(file_path):
         except Exception as e:
             exception[0] = e
 
-    parse_thread = threading.Thread(target=parse_file)
+    parse_thread = threading.Thread(target=parse_file, daemon=True)
     parse_thread.start()
-    parse_thread.join()
+    parse_thread.join(timeout)
+
+    if parse_thread.is_alive():
+        logger.warning(f"Timeout while parsing MIDI file: {file_path}")
+        raise ParseTimeoutError(f"Timeout while parsing MIDI file: {file_path}")
 
     if exception[0] is not None:
         raise exception[0]
@@ -208,7 +214,8 @@ def preprocess_music21_part(part, part_index):
 
         bar_data = preprocess_music21_measure(measure)
         if not bar_data["events"]:
-            bar_data = {"events": [{"type": "TIME_DELTA", "delta": 4.0}]}
+            bar_data = {"events": [{"type": "TIME_DELTA", "delta": 16.0}]}
+            # Optional: Use `continue` instead of assigning to `bar_data` if the intention is to skip empty bars.
 
         track_data["bars"].append(bar_data)
 
@@ -237,6 +244,9 @@ def preprocess_music21_measure(measure):
                 4 * note.offset + 4 * note.duration.quarterLength,
             )
         )
+
+    if not events:
+        return {"events": []}
 
     bar_data = {"events": events_to_events_data(events)}
     return bar_data
