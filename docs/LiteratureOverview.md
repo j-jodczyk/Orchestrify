@@ -2,19 +2,19 @@
 
 | Title                                             | Year  | Article link                                                             | Source code link                   | Description                   |
 |---------------------------------------------------|-------|--------------------------------------------------------------------------|------------------------------------|-------------------------------|
-| SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  | [see below](#SingSong) |
-| Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  | [see below](#Counterpoint-by-convolution) |
-| MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         | https://github.com/salu133445/musegan<br>demo: https://hermandong.com/musegan/ | [see below](#MuseGAN) |
-| MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                     |                  | [see below](#MTM-GAN) |
-| MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#MMM) |
-| LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#LakhNES) |
-| MTT‐GAN                                           | 2021  | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  | [see below](#MTT‐GAN)|
-| MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#MuseNet)  |
+| SingSong                                          | 2023  | https://arxiv.org/abs/2301.12662                                         |                  | [see below](#singsong) |
+| Counterpoint by convolution                       | 2019  | https://arxiv.org/pdf/1903.07227                                         |                  | [see below](#counterpoint-by-convolution) |
+| MuseGan                                           | 2018  | https://arxiv.org/abs/1709.06298                                         | https://github.com/salu133445/musegan<br>demo: https://hermandong.com/musegan/ | [see below](#musegan) |
+| MTM-GAN (Literature survey of multi-track music generation) | 2023  | https://doi.org/10.1007/s11227-022-04914-5                     |                  | [see below](#mtm-gan) |
+| MMM                                               | 2020  | https://arxiv.org/pdf/2008.06048                                         | https://github.com/AI-Guru/MMM-JSB<br>demo: https://jeffreyjohnens.github.io/MMM/ | [see below](#mmm) |
+| LakhNES                                           | 2019  | https://arxiv.org/pdf/1907.04868                                         | https://github.com/chrisdonahue/LakhNES<br>demo: https://chrisdonahue.com/LakhNES/| [see below](#lakhnes) |
+| MTT‐GAN                                           | 2021  | https://ietresearch.onlinelibrary.wiley.com/doi/epdf/10.1049/cit2.12065  |                  | [see below](#mttgan)|
+| MuseNet                                           | 2020  | https://www.researchgate.net/publication/363856706_Musenet_Music_Generation_using_Abstractive_and_Generative_Methods | https://github.com/hidude562/OpenMusenet2<br>demo: https://openai.com/index/musenet/  | [see below](#musenet)  |
 | Music Transformer                                 | 2018  | https://arxiv.org/abs/1809.04281                                         |                  | [see below](#music-transformer) |
 | Anticipatory Music Transformer                    | 2023  | https://arxiv.org/abs/2306.08620                                         | https://github.com/jthickstun/anticipation | [see below](#anticipatory-music-transformer) |
-| REMI Tokenization                                 | 2020  | https://arxiv.org/pdf/2002.00212                                         | - | [see below](#REMI) |
-| TSD Tokenization                                  | 2023  | https://aclanthology.org/2023.emnlp-main.123                             | - | [see below](#TSD) |
-| MIDI-Like Tokenization                            | 2018  | https://arxiv.org/pdf/1808.03715                                         | - | [see below](#MIDI-like) |
+| REMI Tokenization                                 | 2020  | https://arxiv.org/pdf/2002.00212                                         | - | [see below](#remi) |
+| TSD Tokenization                                  | 2023  | https://aclanthology.org/2023.emnlp-main.123                             | - | [see below](#tsd) |
+| MIDI-Like Tokenization                            | 2018  | https://arxiv.org/pdf/1808.03715                                         | - | [see below](#midi-like) |
 
 ### SingSong
 - Based on conditional generative modeling: Utilizes AudioLM as a foundational model but adapts it for generating instrumental music that aligns with vocal inputs.
@@ -93,7 +93,7 @@
 - Different methods of generation:
   - unconditioned: analogous to generating music from scratch
   - continuation: conditioning the model with musical material that precedes the music to be generated
-  - inpainting: conditioning generation on a subset of musical meterial asking the model to fill in the blanks 
+  - inpainting: conditioning generation on a subset of musical meterial asking the model to fill in the blanks
   - attribute control: conditioning generation on high-level attributes (style, tempo, density)
 - Two main ways in which musical material is represented
   - matrix (pianoroll) - for multi-track material it has a form of a tensor (inherintly inefficient representation)
@@ -145,8 +145,8 @@
   - Pretraining
     - Map each Lakh MIDI file into one that fits the designed representation.
       - Skip the ones that are monophonic melodies, and those that fall outside NES range of MIDI notes.
-      - Randomly assign instruments to 3 instruments of NES (P1/P2/TR). There are potentially many possible assignments (variable number of instruments in Lakh files) - outputting multiple examples for one file. 
-      - For pervussive instruments each individual percussive voice is assgned to a noise type 
+      - Randomly assign instruments to 3 instruments of NES (P1/P2/TR). There are potentially many possible assignments (variable number of instruments in Lakh files) - outputting multiple examples for one file.
+      - For pervussive instruments each individual percussive voice is assgned to a noise type
     - Pretrain on such representations.
     - Fine-tune on NES dataset.
   - Each excerpt that is used for training is around 9 seconds long.
@@ -156,7 +156,7 @@
   - Half of the time remove a random number of instruments from the ensamble.
   - Half of the time shuffle the score-to-instrument alignment for melodic instruments.
 
-### MTT‐GAN 
+### MTT‐GAN
 - Decoding block used to learn the internal indormation of a single-track music
 - Cross-track transformers are used to learn the information across tracks with different musical instruments.
 - Model is composed of
@@ -214,7 +214,7 @@
   - This enables the model to generate longer sequences (~2000 tokens) than previous attempts (~500 tokens).
 - **Data Representation**:
   - **JSB Chorales**: Uses a serialized grid-like representation of polyphonic choral music. Timing is discretized to sixteenth notes, with relative attention capturing relational timing and pitch intervals.
-  - **Piano-e-Competition**: MIDI-like event-based encoding with expressive timing and velocity, employing 128 NOTE_ON, 128 NOTE_OFF, 100 TIME_SHIFT, and 32 VELOCITY tokens. 
+  - **Piano-e-Competition**: MIDI-like event-based encoding with expressive timing and velocity, employing 128 NOTE_ON, 128 NOTE_OFF, 100 TIME_SHIFT, and 32 VELOCITY tokens.
 - **Experiments**:
   - Demonstrated improvement in perplexity and perceived coherence in generating piano performances, outperforming LSTM-based models like PerformanceRNN.
   - Priming experiments show that relative attention helps retain motifs and structural repetitions across longer sequences.
@@ -237,7 +237,7 @@
 - Trained on Lakh MIDI dataset
 
 ## Tokenizers
-The following is a short description of 3 tokenization methods that Miditok offers as 'base' tokenizers for their MMM implementation. 
+The following is a short description of 3 tokenization methods that Miditok offers as 'base' tokenizers for their MMM implementation.
 
 ### MIDI-like
 - Very similar to what MIDI messages actually look like.

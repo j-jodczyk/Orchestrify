@@ -74,6 +74,8 @@ def encode_song_data_singular(song_data, density):
     token_sequences = []
 
     token_sequences += ["PIECE_START"]
+    if song_data is None:
+        return token_sequences
     track_data_indices = list(range(len(song_data["tracks"])))
 
     for track_data_index in track_data_indices:
