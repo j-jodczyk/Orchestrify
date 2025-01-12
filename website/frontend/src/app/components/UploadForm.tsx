@@ -159,7 +159,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ onFormSubmit }) => {
                       <option
                         key={`model-${model}`}
                         value={model}
-                        label="Lakh"
+                        label={model}
                       />
                     ))}
                   </Field>
