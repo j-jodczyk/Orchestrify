@@ -15,12 +15,6 @@ Some files were nested in subfolders and some where corrupted. During preprocess
 
 
 # Other scripts:
-## Analyzing time delta impact
-Due to the fact, that empty bars resulted in error in tokenization, we needed to come up with a workaround. The solution we came up with was adding `TIME_DELTA=4.0` events in such empty bars. To see how this impacts the sound of the processed midi files we created this script.
-
-NOTE: music21 library on its own can change the sound a bit, due to the fact, that Control Change events are not processed correctly by it.
-
-:::src.data.analyze_time_delta_impact
 
 ## Creating sanity dataset
 Script for creating sanity dataset containing simple melodies such as scales, arpeggio, Twinkle twinkle little star.
