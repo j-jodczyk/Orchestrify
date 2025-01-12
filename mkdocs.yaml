@@ -6,6 +6,8 @@ theme:
   name: "readthedocs"
 
 markdown_extensions:
+  - toc:
+      permalink: true
   - attr_list
   - pymdownx.details
   - pymdownx.superfences
