@@ -28,8 +28,7 @@ You can find trained models here:
 - [TL Game Themes](https://huggingface.co/rasta3050/lakh_game_themes_transfer_model)
 
 # FMD
-Here is FMD comparison of the models using # FMD
-[frehed-music-distance](https://github.com/jryban/frechet-music-distance).
+Here is FMD comparison of the models using [frehed-music-distance](https://github.com/jryban/frechet-music-distance).
 
 | Genre            | Lakh   | Pure genre     | Transfer learning |
 | ---------------- | ------ | -------------- | ---------------- |
